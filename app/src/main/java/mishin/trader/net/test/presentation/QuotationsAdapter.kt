@@ -1,14 +1,15 @@
-package mishin.trader.net.test
+package mishin.trader.net.test.presentation
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import mishin.trader.net.test.data.network.entity.QuotationRemoteData
 
 class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
-    private var quotationsArray: Array<Quotation>? = null
+    private var quotationsArray: Array<QuotationRemoteData>? = null
 
     //map with ticker keys for updates
-    private var updatedQuotationsMap = HashMap<String, Quotation>()
+    private var updatedQuotationsMap = HashMap<String, QuotationRemoteData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuotationItemViewHolder {
         return QuotationItemViewHolder(parent)
@@ -40,12 +41,12 @@ class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
         return quotationsArray?.size ?: 0
     }
 
-    fun initQuotations(data: Array<Quotation>) {
+    fun initQuotations(data: Array<QuotationRemoteData>) {
         quotationsArray = data
         notifyDataSetChanged()
     }
 
-    fun updateFields(newData: Array<Quotation>) {
+    fun updateFields(newData: Array<QuotationRemoteData>) {
         newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker] = quotation }
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {

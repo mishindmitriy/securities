@@ -1,4 +1,4 @@
-package mishin.trader.net.test
+package mishin.trader.net.test.presentation
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -12,6 +12,8 @@ import coil.Coil
 import coil.request.CachePolicy
 import coil.request.Disposable
 import coil.request.ImageRequest
+import mishin.trader.net.test.R
+import mishin.trader.net.test.data.network.entity.QuotationRemoteData
 import mishin.trader.net.test.databinding.ItemQuotationBinding
 import java.text.DecimalFormat
 
@@ -24,22 +26,21 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private var backgroundColorRunnable: Runnable? = null
     private val decimalFormat = DecimalFormat("###.#####")
 
-    fun update(q: Quotation, qUpd: Quotation?) {
+    fun update(q: QuotationRemoteData, qUpd: QuotationRemoteData?) {
         showStaticFields(q)
 
         val changePercent: Double? =
             if (qUpd?.changePercent != null) qUpd.changePercent else q.changePercent
 
-        val changeDirection: ChangeDirection?
-        when {
-            qUpd == null || qUpd.change == null || q.change == null -> {
-                changeDirection = ChangeDirection.NONE
+        val changeDirection: ChangeDirection = when {
+            qUpd?.change == null || q.change == null -> {
+                ChangeDirection.NONE
             }
             q.change!! > qUpd.change!! -> {
-                changeDirection = ChangeDirection.NEGATIVE
+                ChangeDirection.NEGATIVE
             }
             else -> {
-                changeDirection = ChangeDirection.POSITIVE
+                ChangeDirection.POSITIVE
             }
         }
         showChangingPercent(changePercent, changeDirection)
@@ -55,12 +56,10 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         if (price == null) {
             binding.priceAndChange.text = null
         } else {
-            val changeString: String
-            if (change == null) changeString = ""
-            else changeString =
-                (if (change > 0.0) "+${decimalFormat.format(change)}" else decimalFormat.format(
-                    change
-                ))
+            val changeString: String = if (change == null) ""
+            else (if (change > 0.0) "+${decimalFormat.format(change)}" else decimalFormat.format(
+                change
+            ))
             binding.priceAndChange.text = "$price ($changeString)"
         }
     }
@@ -123,7 +122,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         }
     }
 
-    private fun showStaticFields(quotation: Quotation) {
+    private fun showStaticFields(quotation: QuotationRemoteData) {
         binding.ticker.text = quotation.ticker
         if (quotation.name == null) {
             binding.name.text = ""
@@ -138,12 +137,10 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private fun loadLogo(ticker: String) {
         binding.logo.visibility = View.GONE
         val request = ImageRequest.Builder(itemView.context)
-            .data("https://tradernet.ru/logos/get-logo-by-ticker?ticker=" + ticker.toLowerCase())
+            .data("https://tradernet.ru/logos/get-logo-by-ticker?ticker=" + ticker.lowercase())
             .target { drawable ->
-                run {
-                    binding.logo.visibility = VISIBLE
-                    binding.logo.setImageDrawable(drawable)
-                }
+                binding.logo.visibility = VISIBLE
+                binding.logo.setImageDrawable(drawable)
             }
             .networkCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
