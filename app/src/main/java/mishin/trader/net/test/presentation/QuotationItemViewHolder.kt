@@ -13,7 +13,7 @@ import coil.request.CachePolicy
 import coil.request.Disposable
 import coil.request.ImageRequest
 import mishin.trader.net.test.R
-import mishin.trader.net.test.data.network.entity.QuotationRemoteData
+import mishin.trader.net.test.data.network.rest.entity.QuotationRestData
 import mishin.trader.net.test.databinding.ItemQuotationBinding
 import java.text.DecimalFormat
 
@@ -26,7 +26,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private var backgroundColorRunnable: Runnable? = null
     private val decimalFormat = DecimalFormat("###.#####")
 
-    fun update(q: QuotationRemoteData, qUpd: QuotationRemoteData?) {
+    fun update(q: QuotationRestData, qUpd: QuotationRestData?) {
         showStaticFields(q)
 
         val changePercent: Double? =
@@ -36,6 +36,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             qUpd?.change == null || q.change == null -> {
                 ChangeDirection.NONE
             }
+
             q.change!! > qUpd.change!! -> {
                 ChangeDirection.NEGATIVE
             }
@@ -122,7 +123,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         }
     }
 
-    private fun showStaticFields(quotation: QuotationRemoteData) {
+    private fun showStaticFields(quotation: QuotationRestData) {
         binding.ticker.text = quotation.ticker
         if (quotation.name == null) {
             binding.name.text = ""

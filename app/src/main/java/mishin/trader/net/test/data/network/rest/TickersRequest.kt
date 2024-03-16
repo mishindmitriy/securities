@@ -1,12 +1,14 @@
 package mishin.trader.net.test.data.network.rest
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ApiParams(
     val cmd: String,
     val params: RequestParams = RequestParams()
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class RequestParams(
     val type: String = "stocks",
     val exchange: String = "russia",

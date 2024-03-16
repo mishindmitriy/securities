@@ -9,8 +9,8 @@ class SocketHolder(host: String) {
     private val channelsMap: HashMap<String, Channel<Any>> = hashMapOf()
 
     init {
-        socket.on("ping") { Log.d("tickers", "ping") }
-        socket.on("pong") { Log.d("tickers", "pong") }
+        socket.on("ping") { Log.d("socket", "ping") }
+        socket.on("pong") { Log.d("socket", "pong") }
         /* socket.on(Socket.EVENT_CONNECT) {
              socket.on("q") { args ->
 

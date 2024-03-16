@@ -1,8 +1,9 @@
-package mishin.trader.net.test.data.network.entity
+package mishin.trader.net.test.data.network.rest.entity
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class TickersResponse(
     @SerialName("tickers")
     val tickers: List<String>

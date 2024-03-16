@@ -12,17 +12,17 @@ import org.koin.core.context.GlobalContext.startKoin
 class App : Application() {
 
     private val modules = listOf(
+        apiModule,
         repositoryModule,
         useCasesModule,
-        viewModelsModule,
-        apiModule
+        viewModelsModule
     )
 
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
-            androidLogger()
+            if (BuildConfig.DEBUG) androidLogger()
             androidContext(this@App)
             modules(modules)
         }

@@ -1,41 +1,49 @@
 package mishin.trader.net.test.di
 
 import android.util.Log
-import io.ktor.client.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
 import kotlinx.serialization.json.Json
+import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
 import mishin.trader.net.test.data.repository.TickersRepository
 import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
+import mishin.trader.net.test.domain.QuotationsRepository
 import mishin.trader.net.test.domain.QuotationsUseCase
 import mishin.trader.net.test.domain.QuotationsUseCaseImpl
 import mishin.trader.net.test.presentation.QuotationsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-val repositoryModule = module {
-    single<TickersRepository> { TicketsRepositoryImpl(get(), get()) }
-}
-
-val useCasesModule = module {
-    single<QuotationsUseCase> { QuotationsUseCaseImpl(get()) }
-}
-
 val apiModule = module {
-    single { Json { encodeDefaults = true } }
+    single {
+        Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = true
+        }
+    }
 
     single {
-        HttpClient(Android)
-        {
+        HttpClient(Android) {
             install(Logging) {
                 logger = CustomAndroidHttpLogger
                 level = LogLevel.ALL
             }
-            install(ContentNegotiation) { get() }
-            expectSuccess = true
+            install(ContentNegotiation) { get() as Json }
         }
     }
+}
+
+val repositoryModule = module {
+    single<TickersRepository> { TicketsRepositoryImpl(get(), get()) }
+    single<QuotationsRepository> { QuotationsRepositoryImpl(get()) }
+}
+
+val useCasesModule = module {
+    single<QuotationsUseCase> { QuotationsUseCaseImpl(get(), get()) }
 }
 
 val viewModelsModule = module {

@@ -1,6 +1,7 @@
 package mishin.trader.net.test.data.repository
 
+import mishin.trader.net.test.data.network.rest.entity.Ticker
+
 interface TickersRepository {
-    fun getLocalTickers(): List<String>
-    suspend fun getRemoteTickers(): List<String>
+    suspend fun getTickers(): List<Ticker>
 }
