@@ -1,5 +1,6 @@
 package mishin.trader.net.test.data.repository
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.websocket.WebSockets
@@ -12,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import mishin.trader.net.test.data.network.rest.entity.Ticker
 import mishin.trader.net.test.domain.Quotation
 import mishin.trader.net.test.domain.QuotationsRepository
+import mishin.trader.net.test.domain.Ticker
 import java.util.Collections
 
 class QuotationsRepositoryImpl(
@@ -25,6 +26,7 @@ class QuotationsRepositoryImpl(
         return channelFlow {
             val socketClient = HttpClient(OkHttp) {
                 install(WebSockets) {
+                    Log.wtf("SOCKET", "install socket")
                     pingInterval = 50_000
                 }
             }
@@ -37,20 +39,20 @@ class QuotationsRepositoryImpl(
             }
 
             try {
-                socketClient.ws(
-                    host = "wss.tradernet.ru"
-                ) {
-                    val request = "[\"quotes\",\"${
+                socketClient.ws(host = "wss.tradernet.com") {
+                    val request = "[\"realtimeQuotes\",\"${
                         json.encodeToString(tickers.map { it.ticker })
                     }\"]"
+                    Log.wtf("SOCKET", "send request $request")
                     send(request)
                     while (true) {
                         val othersMessage = incoming.receive() as? Frame.Text
                         val message = othersMessage?.readText()
-                        println("SOCKET MESSAGE$message")
+                        Log.wtf("SOCKET", "message $message")
                     }
                 }
             } catch (e: Exception) {
+                Log.wtf("SOCKET", "exception $e")
                 socketClient.close()
             }
 

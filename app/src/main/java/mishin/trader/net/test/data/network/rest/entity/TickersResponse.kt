@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TickersResponse(
     @SerialName("tickers")
-    val tickers: List<String>
+    val tickers: List<String?>?
 )

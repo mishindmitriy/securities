@@ -8,6 +8,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.serialization.json.Json
+import mishin.trader.net.test.BuildConfig
 import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
 import mishin.trader.net.test.data.repository.TickersRepository
 import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
@@ -30,7 +31,7 @@ val apiModule = module {
         HttpClient(Android) {
             install(Logging) {
                 logger = CustomAndroidHttpLogger
-                level = LogLevel.ALL
+                level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
             }
             install(ContentNegotiation) { get() as Json }
         }
