@@ -24,7 +24,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(recyclerView)
         supportActionBar?.hide()
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+        recyclerView.addItemDecoration(
+            DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        )
         recyclerView.adapter = quotationsAdapter
 
         lifecycleScope.launch {

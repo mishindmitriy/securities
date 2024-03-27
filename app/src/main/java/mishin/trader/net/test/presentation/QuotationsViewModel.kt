@@ -3,10 +3,8 @@ package mishin.trader.net.test.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,18 +35,4 @@ class QuotationsViewModel(private val quotationsUseCase: QuotationsUseCase) : Vi
                 }
         }
     }
-
-    private fun <T> Flow<T>.handleErrors(errorCallback: (e: Throwable) -> Unit): Flow<T> = flow {
-        try {
-            collect { value -> emit(value) }
-        } catch (e: Throwable) {
-            errorCallback.invoke(e)
-        }
-    }
-
-    override fun onCleared() {
-
-    }
-
-    inline fun <reified T> List<Any>.find(): T? = find { it is T } as T
 }
