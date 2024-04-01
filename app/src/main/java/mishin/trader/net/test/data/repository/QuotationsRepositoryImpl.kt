@@ -24,16 +24,8 @@ class QuotationsRepositoryImpl(
         val quotationMutableMap: MutableMap<String, Quotation> = hashMapOf()
         tickers.forEach { quotationMutableMap[it.ticker] = Quotation(it.ticker) }
 
-        fun toList(): List<Quotation> {
-            val outputList = mutableListOf<Quotation>()
-            tickers.forEach { ticker ->
-                quotationMutableMap[ticker.ticker]?.let { outputList.add(it) }
-            }
-            return outputList
-        }
-
         return channelFlow {
-            send(toList())
+            send(quotationMutableMap.toList(tickers))
 
             Log.wtf("SOCKET", "try open socket")
             //todo вынести хост в gradle
@@ -63,7 +55,7 @@ class QuotationsRepositoryImpl(
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
                                 val q = qRaw.mapToViewData()
                                 quotationMutableMap[q.ticker] = q
-                                send(toList())
+                                send(quotationMutableMap.toList(tickers))
                             }
                         }
                     } catch (e: Exception) {
@@ -79,6 +71,12 @@ class QuotationsRepositoryImpl(
         private const val EVENT_QUOTATION = "q"
         private const val POSITION_EVENT = 0
         private const val POSITION_DATA = 1
+    }
+
+    fun Map<String, Quotation>.toList(tickers: List<Ticker>): List<Quotation> {
+        val outputList = mutableListOf<Quotation>()
+        tickers.forEach { ticker -> this[ticker.ticker]?.let { outputList.add(it) } }
+        return outputList
     }
 }
 

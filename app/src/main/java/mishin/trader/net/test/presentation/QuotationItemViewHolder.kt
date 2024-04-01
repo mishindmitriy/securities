@@ -3,33 +3,27 @@ package mishin.trader.net.test.presentation
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
-import coil.request.CachePolicy
-import coil.request.Disposable
-import coil.request.ImageRequest
+import coil.load
 import mishin.trader.net.test.R
-import mishin.trader.net.test.data.network.quotations.QuotationRawData
 import mishin.trader.net.test.databinding.ItemQuotationBinding
+import mishin.trader.net.test.domain.Quotation
 import java.text.DecimalFormat
 
 class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     LayoutInflater.from(parent.context).inflate(R.layout.item_quotation, parent, false)
 ) {
     private val binding: ItemQuotationBinding = ItemQuotationBinding.bind(itemView)
-    private val imageLoader = Coil.imageLoader(parent.context)
-    private var disposable: Disposable? = null
     private var backgroundColorRunnable: Runnable? = null
     private val decimalFormat = DecimalFormat("###.#####")
 
-    fun update(q: QuotationRawData, qUpd: QuotationRawData?) {
+    fun update(q: Quotation) {
         showStaticFields(q)
 
-        val changePercent: Double? =
+        /*val changePercent: Double? =
             if (qUpd?.changePercent != null) qUpd.changePercent else q.changePercent
 
         val changeDirection: ChangeDirection = when {
@@ -50,7 +44,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
             if (qUpd?.lastTradePrice != null) qUpd.lastTradePrice else q.lastTradePrice
         val change: Double? =
             if (qUpd?.change != null) qUpd.change else q.change
-        showPrice(price, change)
+        showPrice(price, change)*/
     }
 
     private fun showPrice(price: Double?, change: Double?) {
@@ -86,10 +80,12 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
                 prefix = "+"
                 color = ContextCompat.getColor(itemView.context, R.color.green)
             }
+
             changePercent < 0 -> {
                 prefix = ""
                 color = ContextCompat.getColor(itemView.context, R.color.red)
             }
+
             else -> {
                 prefix = ""
                 color = ContextCompat.getColor(itemView.context, R.color.black_opacity_90)
@@ -108,6 +104,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
                 }
                 binding.changePercent.postDelayed(backgroundColorRunnable, 500)
             }
+
             ChangeDirection.NEGATIVE -> {
                 binding.changePercent.setBackgroundResource(R.drawable.background_red)
                 binding.changePercent.setTextColor(Color.WHITE)
@@ -117,36 +114,28 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
                 }
                 binding.changePercent.postDelayed(backgroundColorRunnable, 500)
             }
+
             ChangeDirection.NONE -> {
 
             }
         }
     }
 
-    private fun showStaticFields(quotation: QuotationRawData) {
+    private fun showStaticFields(quotation: Quotation) {
         binding.ticker.text = quotation.ticker
-        if (quotation.name == null) {
+        /*if (quotation.name == null) {
             binding.name.text = ""
         } else if (quotation.lastTradeExchange == null) {
             binding.name.text = quotation.name
         } else {
             binding.name.text = "${quotation.lastTradeExchange} | ${quotation.name}"
-        }
-        loadLogo(quotation.ticker!!)
+        }*/
+        loadLogo(quotation.ticker)
     }
 
     private fun loadLogo(ticker: String) {
+        // TODO: replace with coil
         binding.logo.visibility = View.GONE
-        val request = ImageRequest.Builder(itemView.context)
-            .data("https://tradernet.ru/logos/get-logo-by-ticker?ticker=" + ticker.lowercase())
-            .target { drawable ->
-                binding.logo.visibility = VISIBLE
-                binding.logo.setImageDrawable(drawable)
-            }
-            .networkCachePolicy(CachePolicy.ENABLED)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .build()
-        disposable?.dispose()
-        disposable = imageLoader.enqueue(request)
+        binding.logo.load("https://tradernet.ru/logos/get-logo-by-ticker?ticker=" + ticker.lowercase())
     }
 }

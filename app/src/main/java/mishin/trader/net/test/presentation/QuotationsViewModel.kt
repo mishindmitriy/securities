@@ -7,14 +7,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import mishin.trader.net.test.data.network.quotations.QuotationRawData
+import mishin.trader.net.test.domain.Quotation
 import mishin.trader.net.test.domain.QuotationsRepository
 import mishin.trader.net.test.domain.TickersRepository
 
 data class QuotationsViewState(
-    val array: List<QuotationRawData> = listOf(),
+    val list: List<Quotation> = listOf(),
     val inProgress: Boolean = false,
     val error: String? = null
 )
@@ -35,14 +35,8 @@ class QuotationsViewModel(
     init {
         viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
             quotationsRepository.getQuotations(tickersRepository.getTickers())
-                /* .handleErrors { error ->
-                     _state.update { it.copy(error = error.message) }
-                 }*/
-                .map {
-                    // TODO: map to ui model
-                }
-                .collect {
-                    // _state.update { it.copy(error = null) }
+                .collect { list ->
+                    _state.update { it.copy(error = null, list = list) }
                 }
         }
     }

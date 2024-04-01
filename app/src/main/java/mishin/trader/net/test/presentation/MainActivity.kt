@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect {
+                    quotationsAdapter.updateFields(it.list)
                     if (it.error != null) {
+                        // TODO: replace with view
                         Snackbar.make(recyclerView, it.error, Snackbar.LENGTH_LONG).show()
                     }
                 }

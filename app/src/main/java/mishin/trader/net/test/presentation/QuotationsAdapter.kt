@@ -3,28 +3,25 @@ package mishin.trader.net.test.presentation
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import mishin.trader.net.test.data.network.quotations.QuotationRawData
+import mishin.trader.net.test.domain.Quotation
 
 class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
-    private var quotationsArray: Array<QuotationRawData>? = null
-
-    //map with ticker keys for updates
-    private var updatedQuotationsMap = HashMap<String, QuotationRawData>()
+    private var quotationsArray: List<Quotation> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuotationItemViewHolder {
         return QuotationItemViewHolder(parent)
     }
 
     override fun onBindViewHolder(holder: QuotationItemViewHolder, position: Int) {
-        val quotation = quotationsArray!![position]
-        val updatedQuotation = updatedQuotationsMap[quotation.ticker]
+        val quotation = quotationsArray[position]
+        /*val updatedQuotation = updatedQuotationsMap[quotation.ticker]
         if (updatedQuotation != null) {
             if (updatedQuotation.name != null) quotation.name = updatedQuotation.name
             if (updatedQuotation.lastTradeExchange != null) quotation.lastTradeExchange =
                 updatedQuotation.lastTradeExchange
-        }
-        holder.update(quotation, updatedQuotation)
-        if (updatedQuotation != null) {
+        }*/
+        holder.update(quotation)
+        /*if (updatedQuotation != null) {
             updatedQuotationsMap.remove(quotation.ticker)
             //update current object with new fields
             if (updatedQuotation.change != null) quotation.change = updatedQuotation.change
@@ -34,44 +31,34 @@ class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
                 updatedQuotation.lastTradeExchange
             if (updatedQuotation.changePercent != null) quotation.changePercent =
                 updatedQuotation.changePercent
-        }
+        }*/
     }
 
-    override fun getItemCount(): Int {
-        return quotationsArray?.size ?: 0
-    }
+    override fun getItemCount(): Int = quotationsArray.size
 
-    fun initQuotations(data: Array<QuotationRawData>) {
-        quotationsArray = data
-        notifyDataSetChanged()
-    }
-
-    fun updateFields(newData: Array<QuotationRawData>) {
-        newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker!!] = quotation }
+    fun updateFields(newData: List<Quotation>) {
+        //newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker] = quotation }
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
-                return itemCount
+                return quotationsArray.size
             }
 
             override fun getNewListSize(): Int {
-                return itemCount
+                return newData.size
             }
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return true
+                return quotationsArray[oldItemPosition].ticker == newData[newItemPosition].ticker
             }
 
             override fun areContentsTheSame(
                 oldItemPosition: Int,
                 newItemPosition: Int
             ): Boolean {
-                return !updatedQuotationsMap.containsKey(quotationsArray!![oldItemPosition].ticker)
+                return quotationsArray[oldItemPosition] == newData[newItemPosition]
             }
         })
         result.dispatchUpdatesTo(this)
-    }
-
-    fun isEmpty(): Boolean {
-        return quotationsArray == null
+        quotationsArray = newData
     }
 }
