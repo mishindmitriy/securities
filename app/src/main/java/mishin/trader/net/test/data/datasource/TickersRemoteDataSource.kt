@@ -19,7 +19,7 @@ class TickersRemoteDataSource(
 
     suspend fun getTickers(): List<Ticker>? {
         Log.wtf("TICKERS", "request tickets")
-        val response = httpClient.get("https://tradernet.ru/api/") {
+        val response = httpClient.get(URL) {
             parameter(REQUEST_PARAMETER_NAME, json.encodeToString(GetTickersRequest()))
         }
         if (response.status.isSuccess()) {
@@ -37,6 +37,7 @@ class TickersRemoteDataSource(
     }
 
     companion object {
+        private const val URL = "https://tradernet.ru/api/"
         private const val REQUEST_PARAMETER_NAME = "q"
     }
 }

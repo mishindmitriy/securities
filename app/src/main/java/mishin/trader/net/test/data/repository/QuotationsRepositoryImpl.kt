@@ -26,16 +26,13 @@ class QuotationsRepositoryImpl(
 
         return channelFlow {
             send(quotationMutableMap.toList(tickers))
-
             Log.wtf("SOCKET", "try open socket")
-            //todo вынести хост в gradle
-            socketClient.ws(host = "wss.tradernet.com") {
+            socketClient.ws(host = HOST) {
                 Log.wtf("SOCKET", "socket started")
                 while (true) {
                     val rawMessage = incoming.receive() as? Frame.Text
                     val message = rawMessage?.readText().orEmpty()
                     Log.wtf("SOCKET", "message $message")
-
                     try {
                         val messageArray = json.parseToJsonElement(message).jsonArray
                         val event: String = json.decodeFromString(
@@ -45,8 +42,7 @@ class QuotationsRepositoryImpl(
 
                         when (event) {
                             EVENT_USER_DATA -> {
-                                val request =
-                                    "[\"realtimeQuotes\",${json.encodeToString(tickers.map { it.ticker })}]"
+                                val request = createRequest(tickers)
                                 Log.wtf("SOCKET", "send request $request")
                                 send(Frame.Text(request))
                             }
@@ -66,22 +62,28 @@ class QuotationsRepositoryImpl(
         }
     }
 
-    companion object {
-        private const val EVENT_USER_DATA = "userData"
-        private const val EVENT_QUOTATION = "q"
-        private const val POSITION_EVENT = 0
-        private const val POSITION_DATA = 1
+    private fun createRequest(tickers: List<Ticker>): String {
+        return "[$REQUEST_EVENT_QUOTATIONS,${json.encodeToString(tickers.map { it.ticker })}]"
     }
 
-    fun Map<String, Quotation>.toList(tickers: List<Ticker>): List<Quotation> {
+    private fun Map<String, Quotation>.toList(tickers: List<Ticker>): List<Quotation> {
         val outputList = mutableListOf<Quotation>()
         tickers.forEach { ticker -> this[ticker.ticker]?.let { outputList.add(it) } }
         return outputList
     }
-}
 
-private fun QuotationRawData.mapToViewData() =
-    Quotation(
-        ticker = ticker!!,
-        changePercent = changePercent
-    )
+    private fun QuotationRawData.mapToViewData() =
+        Quotation(
+            ticker = ticker!!,
+            changePercent = changePercent
+        )
+
+    companion object {
+        private const val REQUEST_EVENT_QUOTATIONS = "realtimeQuotes"
+        private const val EVENT_USER_DATA = "userData"
+        private const val EVENT_QUOTATION = "q"
+        private const val POSITION_EVENT = 0
+        private const val POSITION_DATA = 1
+        private const val HOST = "wss.tradernet.com"
+    }
+}
