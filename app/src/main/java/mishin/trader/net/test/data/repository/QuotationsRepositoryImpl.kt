@@ -2,8 +2,6 @@ package mishin.trader.net.test.data.repository
 
 import android.util.Log
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.ws
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
@@ -17,15 +15,9 @@ import mishin.trader.net.test.domain.QuotationsRepository
 import mishin.trader.net.test.domain.Ticker
 
 class QuotationsRepositoryImpl(
-    private val json: Json
+    private val json: Json,
+    private val socketClient: HttpClient
 ) : QuotationsRepository {
-
-    private val socketClient = HttpClient(CIO) {
-        install(WebSockets) {
-            Log.wtf("SOCKET", "install socket client")
-            //pingInterval = 50_000
-        }
-    }
 
     override suspend fun getQuotations(tickers: List<Ticker>): Flow<List<Quotation>> {
         //todo нужна ли синхронизация? не нужно тк сначала маппим данные потом отправляем
