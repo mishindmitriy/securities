@@ -35,7 +35,9 @@ class App : Application(), ImageLoaderFactory {
             .newBuilder()
             .memoryCachePolicy(CachePolicy.ENABLED)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .logger(DebugLogger())
+            .also {
+                if (BuildConfig.DEBUG) it.logger(DebugLogger())
+            }
             .build()
     }
 }
