@@ -22,7 +22,6 @@ class QuotationsRepositoryImpl(
 
     override suspend fun getQuotations(tickers: List<Ticker>): Flow<List<Quotation>> {
         val quotationMutableMap: MutableMap<String, Quotation> = hashMapOf()
-        tickers.forEach { quotationMutableMap[it.ticker] = Quotation(it.ticker) }
 
         return channelFlow {
             socketClient.ws(host = HOST) {
@@ -78,7 +77,7 @@ class QuotationsRepositoryImpl(
         if (newQ.minStep != null) {
             mergedQ = mergedQ.copy(minStep = newQ.minStep)
         }
-        if (newQ.name != null) {
+        if (newQ.name.isNotBlank()) {
             mergedQ = mergedQ.copy(name = newQ.name)
         }
         return mergedQ
@@ -107,7 +106,7 @@ class QuotationsRepositoryImpl(
             lastTradeExchange = lastTradeExchange,
             lastTradePrice = lastTradePrice,
             change = change,
-            name = name,
+            name = name.orEmpty(),
             minStep = minStep
         )
 

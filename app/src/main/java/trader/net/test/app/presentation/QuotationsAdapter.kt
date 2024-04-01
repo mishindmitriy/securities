@@ -3,10 +3,9 @@ package trader.net.test.app.presentation
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import trader.net.test.app.domain.Quotation
 
 class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
-    private var quotationsArray: List<Quotation> = listOf()
+    private var quotationsArray: List<QuotationViewData> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuotationItemViewHolder {
         return QuotationItemViewHolder(parent)
@@ -36,7 +35,7 @@ class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
 
     override fun getItemCount(): Int = quotationsArray.size
 
-    fun updateFields(newData: List<Quotation>) {
+    fun updateFields(newData: List<QuotationViewData>) {
         //newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker] = quotation }
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
