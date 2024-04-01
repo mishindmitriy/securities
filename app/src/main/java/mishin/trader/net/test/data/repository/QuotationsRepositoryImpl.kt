@@ -15,7 +15,6 @@ import kotlinx.serialization.json.Json
 import mishin.trader.net.test.domain.Quotation
 import mishin.trader.net.test.domain.QuotationsRepository
 import mishin.trader.net.test.domain.Ticker
-import java.util.Collections
 
 class QuotationsRepositoryImpl(
     private val json: Json
@@ -27,31 +26,39 @@ class QuotationsRepositoryImpl(
             //pingInterval = 50_000
         }
     }
-    private val quotationMutableMap = Collections.synchronizedMap(hashMapOf<String, Quotation>())
+
     override suspend fun getQuotations(tickers: List<Ticker>): Flow<List<Quotation>> {
+        //todo нужна ли синхронизация? не нужно тк сначала маппим данные потом отправляем
+        val quotationMutableMap: MutableMap<String, Quotation> = hashMapOf()
+        tickers.forEach { quotationMutableMap[it.ticker] = Quotation(it.ticker) }
         return channelFlow {
-            if (quotationMutableMap.isEmpty()) {
-                tickers.forEach {
-                    quotationMutableMap[it.ticker] = Quotation(it.ticker)
-                }
-            } else {
-                send(quotationMutableMap.values.sortedBy { it.ticker })
+            val outputList = mutableListOf<Quotation>()
+            tickers.forEach { ticker ->
+                quotationMutableMap[ticker.ticker]?.let { outputList.add(it) }
             }
+            send(outputList)
 
             try {
                 Log.wtf("SOCKET", "try open socket")
+                //todo вынести хост в gradle
                 socketClient.ws(host = "wss.tradernet.com") {
                     Log.wtf("SOCKET", "socket started")
                     while (true) {
+
                         val othersMessage = incoming.receive() as? Frame.Text
                         val message = othersMessage?.readText()
                         Log.wtf("SOCKET", "message $message")
+
                         if (message?.contains("userData") == true) {
+                            //todo складывать запросы в очередь и отсылать когда получили ответ?
                             val request = "[\"realtimeQuotes\",${
                                 json.encodeToString(tickers.map { it.ticker })
                             }]"
                             Log.wtf("SOCKET", "send request $request")
                             send(Frame.Text(request))
+                        } else {
+                            //todo смапить данные
+                            //могут ли данные прилетать в разных потоках? что будет аффектить хешмапу конкаренси
                         }
                     }
                     // TODO: close socket
