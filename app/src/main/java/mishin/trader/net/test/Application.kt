@@ -8,6 +8,7 @@ import coil.util.DebugLogger
 import mishin.trader.net.test.di.dataModule
 import mishin.trader.net.test.di.networkModule
 import mishin.trader.net.test.di.presentationModule
+import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin

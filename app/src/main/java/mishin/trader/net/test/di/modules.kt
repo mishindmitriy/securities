@@ -12,7 +12,6 @@ import io.ktor.client.plugins.websocket.WebSockets
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
-import mishin.trader.net.test.BuildConfig
 import mishin.trader.net.test.data.datasource.TickersLocalDataSource
 import mishin.trader.net.test.data.datasource.TickersRemoteDataSource
 import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
@@ -20,6 +19,7 @@ import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
 import mishin.trader.net.test.domain.QuotationsRepository
 import mishin.trader.net.test.domain.TickersRepository
 import mishin.trader.net.test.presentation.QuotationsViewModel
+import org.koin.android.BuildConfig
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module

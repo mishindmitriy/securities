@@ -2,7 +2,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.23'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlinVersion"
 }
 
 android {
@@ -18,8 +18,11 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+        }
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -40,25 +43,25 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'io.insert-koin:koin-android:3.4.0'
+    implementation "androidx.core:core-ktx:$coreKtxVersion"
+    implementation "io.insert-koin:koin-android:$koinVersion"
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     implementation "androidx.appcompat:appcompat:$appCompatVersion"
-    implementation 'com.google.android.material:material:1.11.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "com.google.android.material:material:$materialVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
 
-    implementation('io.coil-kt:coil:2.6.0')
+    implementation("io.coil-kt:coil:$coilVersion")
 
-    implementation "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialisationJsonVersion"
 
-    implementation "io.ktor:ktor-client-core:2.3.9"
-    implementation("io.ktor:ktor-client-cio:2.3.9")
-    implementation("io.ktor:ktor-client-websockets:2.3.9")
-    implementation "io.ktor:ktor-client-logging:2.3.9"
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.9")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.9")
+    implementation "io.ktor:ktor-client-core:$ktorVersion"
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("io.ktor:ktor-client-websockets:$ktorVersion")
+    implementation "io.ktor:ktor-client-logging:$ktorVersion"
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 }
