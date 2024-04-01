@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mishin.trader.net.test.data.network.rest.entity.QuotationRestData
-import mishin.trader.net.test.domain.QuotationsUseCase
+import mishin.trader.net.test.data.repository.TickersRepository
+import mishin.trader.net.test.domain.QuotationsRepository
 
 data class QuotationsViewState(
     val array: List<QuotationRestData> = listOf(),
@@ -17,13 +18,16 @@ data class QuotationsViewState(
     val error: String? = null
 )
 
-class QuotationsViewModel(private val quotationsUseCase: QuotationsUseCase) : ViewModel() {
+class QuotationsViewModel(
+    private val tickersRepository: TickersRepository,
+    private val quotationsRepository: QuotationsRepository
+) : ViewModel() {
     private val _state = MutableStateFlow(QuotationsViewState())
     val state: StateFlow<QuotationsViewState> get() = _state
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            quotationsUseCase.getQuatations()
+            quotationsRepository.getQuotations(tickersRepository.getTickers())
                 /* .handleErrors { error ->
                      _state.update { it.copy(error = error.message) }
                  }*/

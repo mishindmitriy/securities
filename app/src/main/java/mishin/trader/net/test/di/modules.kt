@@ -13,8 +13,6 @@ import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
 import mishin.trader.net.test.data.repository.TickersRepository
 import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
 import mishin.trader.net.test.domain.QuotationsRepository
-import mishin.trader.net.test.domain.QuotationsUseCase
-import mishin.trader.net.test.domain.QuotationsUseCaseImpl
 import mishin.trader.net.test.presentation.QuotationsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -43,12 +41,8 @@ val repositoryModule = module {
     single<QuotationsRepository> { QuotationsRepositoryImpl(get()) }
 }
 
-val useCasesModule = module {
-    single<QuotationsUseCase> { QuotationsUseCaseImpl(get(), get()) }
-}
-
 val viewModelsModule = module {
-    viewModel { QuotationsViewModel(get()) }
+    viewModel { QuotationsViewModel(get(), get()) }
 }
 
 private object CustomAndroidHttpLogger : Logger {
