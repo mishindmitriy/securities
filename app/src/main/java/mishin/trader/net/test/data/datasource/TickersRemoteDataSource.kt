@@ -1,6 +1,5 @@
 package mishin.trader.net.test.data.datasource
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -12,30 +11,23 @@ import mishin.trader.net.test.data.network.rest.entity.TickersResponse
 import mishin.trader.net.test.domain.Ticker
 
 class TickersRemoteDataSource(
-    private val httpClient: HttpClient,
-    private val json: Json
+    private val httpClient: HttpClient, private val json: Json
 ) {
 
     suspend fun getTickers(): List<Ticker>? {
-        Log.wtf("Tickers", "request tickets")
-        val response = httpClient.get("https://tradernet.ru/api/")
-        {
+        val response = httpClient.get("https://tradernet.ru/api/") {
             val str = json.encodeToString(ApiParams("getTopSecurities"))
             parameter("q", str)
         }
         if (response.status.value == 200) {
             try {
                 val body = response.body<String>()
-                val list = json.decodeFromString<TickersResponse>(body)
-                    .tickers
+                val list = json.decodeFromString<TickersResponse>(body).tickers
                     ?.filterNotNull()
                     ?.map { Ticker(it) }
-                if (!list.isNullOrEmpty()) {
-                    Log.wtf("Tickers", "return tickets $list")
-                    return list
-                }
-            } catch (e: Exception) {
-                Log.wtf("Tickers", "exception $e")
+                if (!list.isNullOrEmpty()) return list
+            } catch (ignore: Exception) {
+
             }
         }
         return null
