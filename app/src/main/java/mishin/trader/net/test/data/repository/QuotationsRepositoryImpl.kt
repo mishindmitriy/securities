@@ -45,8 +45,13 @@ class QuotationsRepositoryImpl(
 
                             EVENT_QUOTATION -> {
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
-                                val q = qRaw.mapToViewData()
-                                quotationMutableMap[q.ticker] = q
+                                val newQdata = qRaw.mapToViewData()
+                                val existQ = quotationMutableMap[newQdata.ticker]
+                                quotationMutableMap[newQdata.ticker] = if (existQ == null) {
+                                    newQdata
+                                } else {
+                                    mergeQ(existQ, newQdata)
+                                }
                                 send(quotationMutableMap.toList(tickers))
                             }
                         }
@@ -56,6 +61,29 @@ class QuotationsRepositoryImpl(
                 }
             }
         }
+    }
+
+    private fun mergeQ(existQ: Quotation, newQ: Quotation): Quotation {
+        var mergedQ = existQ
+        if (newQ.change != null) {
+            mergedQ = mergedQ.copy(change = newQ.change)
+        }
+        if (newQ.changePercent != null) {
+            mergedQ = mergedQ.copy(changePercent = newQ.changePercent)
+        }
+        if (newQ.lastTradeExchange != null) {
+            mergedQ = mergedQ.copy(lastTradeExchange = newQ.lastTradeExchange)
+        }
+        if (newQ.lastTradePrice != null) {
+            mergedQ = mergedQ.copy(lastTradePrice = newQ.lastTradePrice)
+        }
+        if (newQ.minStep != null) {
+            mergedQ = mergedQ.copy(minStep = newQ.minStep)
+        }
+        if (newQ.name != null) {
+            mergedQ = mergedQ.copy(name = newQ.name)
+        }
+        return mergedQ
     }
 
     private fun createRequest(tickers: List<Ticker>): String {
