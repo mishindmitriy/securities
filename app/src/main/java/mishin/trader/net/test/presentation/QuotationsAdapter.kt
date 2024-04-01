@@ -3,13 +3,13 @@ package mishin.trader.net.test.presentation
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import mishin.trader.net.test.data.network.rest.entity.QuotationRestData
+import mishin.trader.net.test.data.network.quotations.QuotationRawData
 
 class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
-    private var quotationsArray: Array<QuotationRestData>? = null
+    private var quotationsArray: Array<QuotationRawData>? = null
 
     //map with ticker keys for updates
-    private var updatedQuotationsMap = HashMap<String, QuotationRestData>()
+    private var updatedQuotationsMap = HashMap<String, QuotationRawData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuotationItemViewHolder {
         return QuotationItemViewHolder(parent)
@@ -41,13 +41,13 @@ class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
         return quotationsArray?.size ?: 0
     }
 
-    fun initQuotations(data: Array<QuotationRestData>) {
+    fun initQuotations(data: Array<QuotationRawData>) {
         quotationsArray = data
         notifyDataSetChanged()
     }
 
-    fun updateFields(newData: Array<QuotationRestData>) {
-        newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker] = quotation }
+    fun updateFields(newData: Array<QuotationRawData>) {
+        newData.forEach { quotation -> updatedQuotationsMap[quotation.ticker!!] = quotation }
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
                 return itemCount

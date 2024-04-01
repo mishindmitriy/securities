@@ -1,10 +1,10 @@
-package mishin.trader.net.test.data.network.rest
+package mishin.trader.net.test.data.network.tickers
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ApiParams(
-    val cmd: String,
+data class GetTickersRequest(
+    val cmd: String = "getTopSecurities",
     val params: RequestParams = RequestParams()
 )
 
