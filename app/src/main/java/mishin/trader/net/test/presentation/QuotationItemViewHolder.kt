@@ -2,7 +2,6 @@ package mishin.trader.net.test.presentation
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
@@ -131,13 +130,8 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         } else {
             binding.name.text = "${quotation.lastTradeExchange} | ${quotation.name}"
         }*/
-        loadLogo(quotation.ticker)
+        binding.logo.load(quotation.logoUrl)
         showPrice(quotation.lastTradePrice, quotation.changePercent)
     }
 
-    private fun loadLogo(ticker: String) {
-        // TODO: replace with coil
-        binding.logo.visibility = View.GONE
-        binding.logo.load("https://tradernet.ru/logos/get-logo-by-ticker?ticker=" + ticker.lowercase())
-    }
 }

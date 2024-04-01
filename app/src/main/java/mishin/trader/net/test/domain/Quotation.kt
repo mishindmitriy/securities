@@ -9,4 +9,10 @@ data class Quotation(
     var lastTradePrice: Double? = null,
     var change: Double? = null,
     var minStep: Double? = null
-)
+) {
+    val logoUrl: String get() = LOGO_URL + ticker.lowercase()
+
+    companion object {
+        private const val LOGO_URL = "https://tradernet.ru/logos/get-logo-by-ticker?ticker="
+    }
+}
