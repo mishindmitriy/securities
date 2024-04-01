@@ -10,9 +10,9 @@ import io.ktor.client.plugins.logging.Logging
 import kotlinx.serialization.json.Json
 import mishin.trader.net.test.BuildConfig
 import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
-import mishin.trader.net.test.data.repository.TickersRepository
 import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
 import mishin.trader.net.test.domain.QuotationsRepository
+import mishin.trader.net.test.domain.TickersRepository
 import mishin.trader.net.test.presentation.QuotationsViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module

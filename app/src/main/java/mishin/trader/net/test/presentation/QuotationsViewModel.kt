@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import mishin.trader.net.test.data.network.rest.entity.QuotationRestData
-import mishin.trader.net.test.data.repository.TickersRepository
 import mishin.trader.net.test.domain.QuotationsRepository
+import mishin.trader.net.test.domain.TickersRepository
 
 data class QuotationsViewState(
     val array: List<QuotationRestData> = listOf(),

@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import mishin.trader.net.test.data.network.rest.ApiParams
 import mishin.trader.net.test.data.network.rest.entity.TickersResponse
 import mishin.trader.net.test.domain.Ticker
+import mishin.trader.net.test.domain.TickersRepository
 
 class TicketsRepositoryImpl(
     private val httpClient: HttpClient,
