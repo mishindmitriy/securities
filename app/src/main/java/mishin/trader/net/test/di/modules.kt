@@ -9,6 +9,8 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import kotlinx.serialization.json.Json
 import mishin.trader.net.test.BuildConfig
+import mishin.trader.net.test.data.datasource.TickersLocalDataSource
+import mishin.trader.net.test.data.datasource.TickersRemoteDataSource
 import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
 import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
 import mishin.trader.net.test.domain.QuotationsRepository
@@ -36,19 +38,21 @@ val apiModule = module {
     }
 }
 
-val repositoryModule = module {
+val dataModule = module {
+    single { TickersLocalDataSource() }
+    single { TickersRemoteDataSource(get(), get()) }
     single<TickersRepository> { TicketsRepositoryImpl(get(), get()) }
     single<QuotationsRepository> { QuotationsRepositoryImpl(get()) }
 }
 
-val viewModelsModule = module {
+val presentationModule = module {
     viewModel { QuotationsViewModel(get(), get()) }
 }
 
 private object CustomAndroidHttpLogger : Logger {
-    private const val logTag = "CustomAndroidHttpLogger"
+    private const val LOG_TAG = "CustomAndroidHttpLogger"
 
     override fun log(message: String) {
-        Log.i(logTag, message)
+        Log.i(LOG_TAG, message)
     }
 }
