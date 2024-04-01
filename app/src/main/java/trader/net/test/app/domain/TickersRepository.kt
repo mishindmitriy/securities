@@ -1,4 +1,4 @@
-package mishin.trader.net.test.domain
+package trader.net.test.app.domain
 
 interface TickersRepository {
     suspend fun getTickers(): List<Ticker>

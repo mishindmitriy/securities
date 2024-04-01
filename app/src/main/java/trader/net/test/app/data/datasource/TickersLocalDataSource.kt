@@ -1,6 +1,6 @@
-package mishin.trader.net.test.data.datasource
+package trader.net.test.app.data.datasource
 
-import mishin.trader.net.test.domain.Ticker
+import trader.net.test.app.domain.Ticker
 
 class TickersLocalDataSource {
     fun getTickers(): List<Ticker> {

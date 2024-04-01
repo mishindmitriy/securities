@@ -1,4 +1,4 @@
-package mishin.trader.net.test.data.network.tickers
+package trader.net.test.app.data.network.tickers
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

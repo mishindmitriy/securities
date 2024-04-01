@@ -1,4 +1,4 @@
-package mishin.trader.net.test.data.datasource
+package trader.net.test.app.data.datasource
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -8,9 +8,9 @@ import io.ktor.client.request.parameter
 import io.ktor.http.isSuccess
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import mishin.trader.net.test.data.network.tickers.GetTickersRequest
-import mishin.trader.net.test.data.network.tickers.TickersResponse
-import mishin.trader.net.test.domain.Ticker
+import trader.net.test.app.data.network.tickers.GetTickersRequest
+import trader.net.test.app.data.network.tickers.TickersResponse
+import trader.net.test.app.domain.Ticker
 
 class TickersRemoteDataSource(
     private val httpClient: HttpClient,

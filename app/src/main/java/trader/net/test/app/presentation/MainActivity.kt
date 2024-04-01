@@ -1,4 +1,4 @@
-package mishin.trader.net.test.presentation
+package trader.net.test.app.presentation
 
 
 import android.os.Bundle

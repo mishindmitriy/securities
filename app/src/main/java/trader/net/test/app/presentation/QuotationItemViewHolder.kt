@@ -1,4 +1,4 @@
-package mishin.trader.net.test.presentation
+package trader.net.test.app.presentation
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -7,9 +7,9 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import mishin.trader.net.test.R
-import mishin.trader.net.test.databinding.ItemQuotationBinding
-import mishin.trader.net.test.domain.Quotation
+import trader.net.test.app.R
+import trader.net.test.app.databinding.ItemQuotationBinding
+import trader.net.test.app.domain.Quotation
 import java.text.DecimalFormat
 
 class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(

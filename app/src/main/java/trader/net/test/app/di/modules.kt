@@ -1,4 +1,4 @@
-package mishin.trader.net.test.di
+package trader.net.test.app.di
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -12,17 +12,17 @@ import io.ktor.client.plugins.websocket.WebSockets
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
-import mishin.trader.net.test.data.datasource.TickersLocalDataSource
-import mishin.trader.net.test.data.datasource.TickersRemoteDataSource
-import mishin.trader.net.test.data.repository.QuotationsRepositoryImpl
-import mishin.trader.net.test.data.repository.TicketsRepositoryImpl
-import mishin.trader.net.test.domain.QuotationsRepository
-import mishin.trader.net.test.domain.TickersRepository
-import mishin.trader.net.test.presentation.QuotationsViewModel
 import org.koin.android.BuildConfig
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import trader.net.test.app.data.datasource.TickersLocalDataSource
+import trader.net.test.app.data.datasource.TickersRemoteDataSource
+import trader.net.test.app.data.repository.QuotationsRepositoryImpl
+import trader.net.test.app.data.repository.TicketsRepositoryImpl
+import trader.net.test.app.domain.QuotationsRepository
+import trader.net.test.app.domain.TickersRepository
+import trader.net.test.app.presentation.QuotationsViewModel
 
 private const val DISPATCHER_IO = "dispatcher_io"
 

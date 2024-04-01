@@ -1,3 +1,3 @@
-package mishin.trader.net.test.domain
+package trader.net.test.app.domain
 
 data class Ticker(val ticker: String)

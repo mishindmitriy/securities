@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 include ':app'
-rootProject.name = "MishinTraderNetTest"
+rootProject.name = "TraderNetTestApp"

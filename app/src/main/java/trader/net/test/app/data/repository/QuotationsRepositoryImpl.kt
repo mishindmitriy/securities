@@ -1,4 +1,4 @@
-package mishin.trader.net.test.data.repository
+package trader.net.test.app.data.repository
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -10,10 +10,10 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
-import mishin.trader.net.test.data.network.quotations.QuotationRawData
-import mishin.trader.net.test.domain.Quotation
-import mishin.trader.net.test.domain.QuotationsRepository
-import mishin.trader.net.test.domain.Ticker
+import trader.net.test.app.data.network.quotations.QuotationRawData
+import trader.net.test.app.domain.Quotation
+import trader.net.test.app.domain.QuotationsRepository
+import trader.net.test.app.domain.Ticker
 
 class QuotationsRepositoryImpl(
     private val json: Json,
@@ -47,11 +47,10 @@ class QuotationsRepositoryImpl(
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
                                 val newQdata = qRaw.mapToViewData()
                                 val existQ = quotationMutableMap[newQdata.ticker]
-                                quotationMutableMap[newQdata.ticker] = if (existQ == null) {
-                                    newQdata
-                                } else {
-                                    mergeQ(existQ, newQdata)
-                                }
+                                val updQ = if (existQ == null) newQdata
+                                else mergeQ(existQ, newQdata)
+                                Log.wtf("SOCKET", "new data $newQdata")
+                                quotationMutableMap[newQdata.ticker] = updQ
                                 send(quotationMutableMap.toList(tickers))
                             }
                         }

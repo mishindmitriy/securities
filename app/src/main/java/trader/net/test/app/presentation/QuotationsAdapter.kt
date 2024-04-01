@@ -1,9 +1,9 @@
-package mishin.trader.net.test.presentation
+package trader.net.test.app.presentation
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import mishin.trader.net.test.domain.Quotation
+import trader.net.test.app.domain.Quotation
 
 class QuotationsAdapter : RecyclerView.Adapter<QuotationItemViewHolder>() {
     private var quotationsArray: List<Quotation> = listOf()

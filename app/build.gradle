@@ -10,7 +10,7 @@ android {
     buildToolsVersion = buildVersion
 
     defaultConfig {
-        applicationId "mishin.trader.net.test"
+        applicationId "trader.net.test.app"
         minSdkVersion minVersion
         targetSdkVersion targetVersion
         versionCode 1
@@ -39,7 +39,7 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    namespace 'mishin.trader.net.test'
+    namespace 'trader.net.test.app'
 }
 
 dependencies {

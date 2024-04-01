@@ -1,9 +1,9 @@
-package mishin.trader.net.test.data.repository
+package trader.net.test.app.data.repository
 
-import mishin.trader.net.test.data.datasource.TickersLocalDataSource
-import mishin.trader.net.test.data.datasource.TickersRemoteDataSource
-import mishin.trader.net.test.domain.Ticker
-import mishin.trader.net.test.domain.TickersRepository
+import trader.net.test.app.data.datasource.TickersLocalDataSource
+import trader.net.test.app.data.datasource.TickersRemoteDataSource
+import trader.net.test.app.domain.Ticker
+import trader.net.test.app.domain.TickersRepository
 
 class TicketsRepositoryImpl(
     private val localDataSource: TickersLocalDataSource,

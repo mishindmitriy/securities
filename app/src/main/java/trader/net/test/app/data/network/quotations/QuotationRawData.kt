@@ -1,4 +1,4 @@
-package mishin.trader.net.test.data.network.quotations
+package trader.net.test.app.data.network.quotations
 
 import kotlinx.serialization.SerialName
 
