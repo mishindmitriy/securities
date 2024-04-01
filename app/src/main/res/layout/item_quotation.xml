@@ -48,6 +48,7 @@
         android:padding="4dp"
         android:paddingTop="4dp"
         android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/ticker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/ticker" />
 

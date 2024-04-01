@@ -21,10 +21,16 @@ import trader.net.test.app.data.datasource.TickersRemoteDataSource
 import trader.net.test.app.data.repository.QuotationsRepositoryImpl
 import trader.net.test.app.data.repository.TicketsRepositoryImpl
 import trader.net.test.app.domain.QuotationsRepository
+import trader.net.test.app.domain.ResourceProvider
 import trader.net.test.app.domain.TickersRepository
 import trader.net.test.app.presentation.QuotationsViewModel
+import trader.net.test.app.presentation.ResourceProviderImpl
 
 private const val DISPATCHER_IO = "dispatcher_io"
+
+val appModule = module {
+    single<ResourceProvider> { ResourceProviderImpl(get()) }
+}
 
 val networkModule = module {
     single<CoroutineDispatcher>(named(DISPATCHER_IO)) { Dispatchers.IO }
@@ -60,7 +66,7 @@ val dataModule = module {
 }
 
 val presentationModule = module {
-    viewModel { QuotationsViewModel(get(), get(), get(named(DISPATCHER_IO))) }
+    viewModel { QuotationsViewModel(get(), get(), get(), get(named(DISPATCHER_IO))) }
 }
 
 private object CustomAndroidHttpLogger : Logger {

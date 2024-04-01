@@ -2,41 +2,41 @@ package trader.net.test.app.presentation
 
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import trader.net.test.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: QuotationsViewModel by viewModel()
+    private lateinit var binding: ActivityMainBinding
 
     private val quotationsAdapter = QuotationsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val recyclerView = RecyclerView(this)
-        setContentView(recyclerView)
+        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
         supportActionBar?.hide()
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.addItemDecoration(
+        binding.recycler.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
-        recyclerView.adapter = quotationsAdapter
+        binding.recycler.adapter = quotationsAdapter
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect {
                     quotationsAdapter.updateFields(it.list)
-                    if (it.error != null) {
-                        // TODO: replace with view
-                        Snackbar.make(recyclerView, it.error, Snackbar.LENGTH_LONG).show()
-                    }
+                    binding.progress.isVisible = it.inProgress
+                    binding.error.isVisible = it.error != null
+                    binding.error.text = it.error
+                    binding.recycler.isVisible = it.list.isNotEmpty() && it.error == null
                 }
             }
         }

@@ -9,6 +9,7 @@ import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
+import trader.net.test.app.di.appModule
 import trader.net.test.app.di.dataModule
 import trader.net.test.app.di.networkModule
 import trader.net.test.app.di.presentationModule
@@ -16,6 +17,7 @@ import trader.net.test.app.di.presentationModule
 class App : Application(), ImageLoaderFactory {
 
     private val modules = listOf(
+        appModule,
         networkModule,
         dataModule,
         presentationModule

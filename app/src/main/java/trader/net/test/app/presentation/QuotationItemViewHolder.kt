@@ -122,14 +122,13 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 
     private fun showStaticFields(quotation: Quotation) {
         binding.ticker.text = quotation.ticker
-        binding.name.text = quotation.name
-        /*if (quotation.name == null) {
+        if (quotation.name == null) {
             binding.name.text = ""
         } else if (quotation.lastTradeExchange == null) {
             binding.name.text = quotation.name
         } else {
             binding.name.text = "${quotation.lastTradeExchange} | ${quotation.name}"
-        }*/
+        }
         binding.logo.load(quotation.logoUrl)
         showPrice(quotation.lastTradePrice, quotation.changePercent)
     }

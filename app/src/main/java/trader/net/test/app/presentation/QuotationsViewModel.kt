@@ -9,34 +9,42 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import trader.net.test.app.R
 import trader.net.test.app.domain.Quotation
 import trader.net.test.app.domain.QuotationsRepository
+import trader.net.test.app.domain.ResourceProvider
 import trader.net.test.app.domain.TickersRepository
 
 data class QuotationsViewState(
     val list: List<Quotation> = listOf(),
-    val inProgress: Boolean = false,
+    val inProgress: Boolean = true,
     val error: String? = null
 )
 
 class QuotationsViewModel(
     private val tickersRepository: TickersRepository,
     private val quotationsRepository: QuotationsRepository,
-    private val coroutineDispatcher: CoroutineDispatcher
+    private val resourceProvider: ResourceProvider,
+    coroutineDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _state = MutableStateFlow(QuotationsViewState())
     val state: StateFlow<QuotationsViewState> get() = _state
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.d(TAG, throwable.message.toString())
-        // TODO: error state
+        _state.update {
+            it.copy(
+                error = resourceProvider.getString(R.string.error_something_wrong),
+                inProgress = false
+            )
+        }
     }
 
     init {
         viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
             quotationsRepository.getQuotations(tickersRepository.getTickers())
                 .collect { list ->
-                    _state.update { it.copy(error = null, list = list) }
+                    _state.update { it.copy(error = null, inProgress = false, list = list) }
                 }
         }
     }

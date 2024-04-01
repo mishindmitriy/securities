@@ -25,7 +25,6 @@ class QuotationsRepositoryImpl(
         tickers.forEach { quotationMutableMap[it.ticker] = Quotation(it.ticker) }
 
         return channelFlow {
-            send(quotationMutableMap.toList(tickers))
             socketClient.ws(host = HOST) {
                 while (true) {
                     val rawMessage = incoming.receive() as? Frame.Text
