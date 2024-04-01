@@ -13,5 +13,7 @@ data class RequestParams(
     val type: String = "stocks",
     val exchange: String = "russia",
     val gainers: Int = 0,
-    val limit: Int = 10,
+    val limit: Int = LIMIT_DEFAULT,
 )
+
+private const val LIMIT_DEFAULT = 30
