@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
+import trader.net.test.app.SOCKET_HOST
 import trader.net.test.app.data.network.quotations.QuotationRawData
 import trader.net.test.app.domain.Quotation
 import trader.net.test.app.domain.QuotationsRepository
@@ -29,7 +30,7 @@ class QuotationsRepositoryImpl(
 
         return channelFlow {
             send(quotationMutableMap.toList(tickers))
-            socketClient.ws(host = HOST) {
+            socketClient.ws(host = SOCKET_HOST) {
                 while (true) {
                     val rawMessage = incoming.receive() as? Frame.Text
                     val message = rawMessage?.readText().orEmpty()
@@ -108,7 +109,6 @@ class QuotationsRepositoryImpl(
         private const val EVENT_QUOTATION = "q"
         private const val POSITION_EVENT = 0
         private const val POSITION_DATA = 1
-        private const val HOST = "wss.tradernet.com"
         private const val FLOW_DEBOUNCE_MILLIS = 50L
     }
 }

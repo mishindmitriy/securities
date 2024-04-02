@@ -7,6 +7,7 @@ import io.ktor.client.request.parameter
 import io.ktor.http.isSuccess
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import trader.net.test.app.API_URL
 import trader.net.test.app.data.network.tickers.GetTickersRequest
 import trader.net.test.app.data.network.tickers.TickersResponse
 import trader.net.test.app.domain.Ticker
@@ -17,7 +18,7 @@ class TickersRemoteDataSource(
 ) {
 
     suspend fun getTickers(): List<Ticker>? {
-        val response = httpClient.get(URL) {
+        val response = httpClient.get(API_URL) {
             parameter(REQUEST_PARAMETER_NAME, json.encodeToString(GetTickersRequest()))
         }
         if (response.status.isSuccess()) {
@@ -34,7 +35,6 @@ class TickersRemoteDataSource(
     }
 
     companion object {
-        private const val URL = "https://tradernet.ru/api/"
         private const val REQUEST_PARAMETER_NAME = "q"
     }
 }

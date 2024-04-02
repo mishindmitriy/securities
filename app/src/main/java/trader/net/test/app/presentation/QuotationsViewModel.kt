@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import trader.net.test.app.LOGO_URL
 import trader.net.test.app.R
 import trader.net.test.app.domain.Quotation
 import trader.net.test.app.domain.QuotationsRepository
@@ -91,7 +92,6 @@ class QuotationsViewModel(
 
     companion object {
         private const val TAG = "QUOTATIONS_VIEWMODEL"
-        private const val LOGO_URL = "https://tradernet.ru/logos/get-logo-by-ticker?ticker="
         private const val NAME_PATTERN = "%s | %s"
         private const val DECIMAL_FORMAT_PATTERN = "###.#####"
         private const val POSITIVE_DECIMAL_PREFIX = "+"
