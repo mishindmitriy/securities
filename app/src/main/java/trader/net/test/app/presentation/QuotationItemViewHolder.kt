@@ -20,42 +20,4 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         binding.changePercent.setTextColor(q.percentColor)
         binding.changePercent.text = q.percentChange
     }
-
-    fun updatePercentage() {
-
-    }
-
-    /*enum class ChangeDirection {
-        POSITIVE, NEGATIVE, NONE
-    }
-
-
-
-        when (changeDirection) {
-            ChangeDirection.POSITIVE -> {
-                binding.changePercent.setBackgroundResource(R.drawable.background_green)
-                binding.changePercent.setTextColor(Color.WHITE)
-                backgroundColorRunnable = Runnable {
-                    binding.changePercent.background = null
-                    binding.changePercent.setTextColor(color)
-                }
-                binding.changePercent.postDelayed(backgroundColorRunnable, 500)
-            }
-
-            ChangeDirection.NEGATIVE -> {
-                binding.changePercent.setBackgroundResource(R.drawable.background_red)
-                binding.changePercent.setTextColor(Color.WHITE)
-                backgroundColorRunnable = Runnable {
-                    binding.changePercent.background = null
-                    binding.changePercent.setTextColor(color)
-                }
-                binding.changePercent.postDelayed(backgroundColorRunnable, 500)
-            }
-
-            ChangeDirection.NONE -> {
-
-            }
-        }
-    }*/
-
 }

@@ -32,13 +32,13 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect {
-                    quotationsAdapter.updateFields(it.list)
-                    binding.progress.isVisible = it.inProgress
-                    binding.error.isVisible = it.error != null
-                    binding.repeatButton.isVisible = it.error != null
-                    binding.error.text = it.error
-                    binding.recycler.isVisible = it.list.isNotEmpty() && it.error == null
+                viewModel.state.collect { state ->
+                    quotationsAdapter.submitList(state.list)
+                    binding.progress.isVisible = state.inProgress
+                    binding.error.isVisible = state.error != null
+                    binding.repeatButton.isVisible = state.error != null
+                    binding.error.text = state.error
+                    binding.recycler.isVisible = state.list.isNotEmpty() && state.error == null
                 }
             }
         }
