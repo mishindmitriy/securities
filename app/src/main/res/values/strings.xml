@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TraderNetTestApp</string>
     <string name="error_something_wrong">Ошибка. Что-то пошло не так</string>
+    <string name="repeat_label">Попробовать снова</string>
 </resources>

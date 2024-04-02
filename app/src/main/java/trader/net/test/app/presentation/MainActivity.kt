@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
         binding.recycler.adapter = quotationsAdapter
+        binding.repeatButton.setOnClickListener { viewModel.loadData() }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                     quotationsAdapter.updateFields(it.list)
                     binding.progress.isVisible = it.inProgress
                     binding.error.isVisible = it.error != null
+                    binding.repeatButton.isVisible = it.error != null
                     binding.error.text = it.error
                     binding.recycler.isVisible = it.list.isNotEmpty() && it.error == null
                 }

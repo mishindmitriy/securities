@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -27,7 +28,7 @@ class QuotationsViewModel(
     private val tickersRepository: TickersRepository,
     private val quotationsRepository: QuotationsRepository,
     private val resourceProvider: ResourceProvider,
-    coroutineDispatcher: CoroutineDispatcher,
+    private val coroutineDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _state = MutableStateFlow(QuotationsViewState())
     val state: StateFlow<QuotationsViewState> get() = _state
@@ -44,14 +45,10 @@ class QuotationsViewModel(
         }
     }
 
+    private var subscriptionJob: Job? = null
+
     init {
-        viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
-            quotationsRepository.getQuotations(tickersRepository.getTickers())
-                .map { it.map { item -> item.toViewData() } }
-                .collect { list ->
-                    _state.update { it.copy(error = null, inProgress = false, list = list) }
-                }
-        }
+        loadData()
     }
 
     private fun Quotation.toViewData() = QuotationViewData(
@@ -60,8 +57,8 @@ class QuotationsViewModel(
         else String.format(NAME_PATTERN, lastTradeExchange, name),
         logoUrl = LOGO_URL + ticker.lowercase(),
         priceChange = formatPrice(this),
-        percentColor = preparePercentColor(changePercent ?: 0.0),
-        percentChange = formatPercentage(changePercent ?: 0.0)
+        percentColor = preparePercentColor(changePercent),
+        percentChange = formatPercentage(changePercent)
     )
 
     private fun formatPercentage(changePercent: Double): String {
@@ -92,6 +89,17 @@ class QuotationsViewModel(
             else -> R.color.black_opacity_90
         }
     )
+
+    fun loadData() {
+        subscriptionJob?.cancel()
+        subscriptionJob = viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
+            quotationsRepository.getQuotations(tickersRepository.getTickers())
+                .map { it.map { item -> item.toViewData() } }
+                .collect { list ->
+                    _state.update { it.copy(error = null, inProgress = false, list = list) }
+                }
+        }
+    }
 
     companion object {
         private const val TAG = "viewmodel"
