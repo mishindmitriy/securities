@@ -7,6 +7,7 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -22,8 +23,12 @@ class QuotationsRepositoryImpl(
 
     override suspend fun getQuotations(tickers: List<Ticker>): Flow<List<Quotation>> {
         val quotationMutableMap: MutableMap<String, Quotation> = hashMapOf()
+        tickers.forEach { ticker ->
+            quotationMutableMap[ticker.value] = Quotation(ticker = ticker.value, name = "")
+        }
 
         return channelFlow {
+            send(quotationMutableMap.toList(tickers))
             socketClient.ws(host = HOST) {
                 while (true) {
                     val rawMessage = incoming.receive() as? Frame.Text
@@ -43,48 +48,33 @@ class QuotationsRepositoryImpl(
 
                             EVENT_QUOTATION -> {
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
-                                val newQdata = qRaw.mapToViewData()
-                                val existQ = quotationMutableMap[newQdata.ticker]
-                                val updQ = if (existQ == null) newQdata
-                                else mergeQ(existQ, newQdata)
-                                Log.wtf("SOCKET", "new data $newQdata")
-                                quotationMutableMap[newQdata.ticker] = updQ
+                                val existQ = quotationMutableMap[qRaw.ticker]
+                                val updQ = existQ?.mergeQ(qRaw) ?: qRaw.mapToViewData()
+                                quotationMutableMap[updQ.ticker] = updQ
                                 send(quotationMutableMap.toList(tickers))
                             }
                         }
                     } catch (e: Exception) {
-                        Log.wtf("SOCKET", e.message)
+                        Log.d(LOG_TAG, e.message.orEmpty())
                     }
                 }
             }
         }
+            .debounce(FLOW_DEBOUNCE_MILLIS)
     }
 
-    private fun mergeQ(existQ: Quotation, newQ: Quotation): Quotation {
-        var mergedQ = existQ
-        if (newQ.change != null) {
-            mergedQ = mergedQ.copy(change = newQ.change)
-        }
-        if (newQ.changePercent != null) {
-            mergedQ = mergedQ.copy(changePercent = newQ.changePercent)
-        }
-        if (newQ.lastTradeExchange != null) {
-            mergedQ = mergedQ.copy(lastTradeExchange = newQ.lastTradeExchange)
-        }
-        if (newQ.lastTradePrice != null) {
-            mergedQ = mergedQ.copy(lastTradePrice = newQ.lastTradePrice)
-        }
-        if (newQ.minStep != null) {
-            mergedQ = mergedQ.copy(minStep = newQ.minStep)
-        }
-        if (newQ.name.isNotBlank()) {
-            mergedQ = mergedQ.copy(name = newQ.name)
-        }
-        return mergedQ
+    private fun Quotation.mergeQ(newQ: QuotationRawData): Quotation {
+        newQ.change?.let { change = it }
+        newQ.changePercent?.let { changePercent = it }
+        newQ.lastTradeExchange?.let { lastTradeExchange = it }
+        newQ.lastTradePrice?.let { lastTradePrice = it }
+        newQ.minStep?.let { minStep = it }
+        newQ.name?.let { name = it }
+        return this
     }
 
     private fun createRequest(tickers: List<Ticker>): String {
-        val stringTickersList = tickers.map { it.ticker }
+        val stringTickersList = tickers.map { it.value }
         return String.format(
             REQUEST_PATTERN,
             REQUEST_EVENT_QUOTATIONS,
@@ -94,7 +84,7 @@ class QuotationsRepositoryImpl(
 
     private fun Map<String, Quotation>.toList(tickers: List<Ticker>): List<Quotation> {
         val outputList = mutableListOf<Quotation>()
-        tickers.forEach { ticker -> this[ticker.ticker]?.let { outputList.add(it) } }
+        tickers.forEach { ticker -> this[ticker.value]?.let { outputList.add(it) } }
         return outputList
     }
 
@@ -102,15 +92,16 @@ class QuotationsRepositoryImpl(
         Quotation(
             //ticker require, exception will skip entity
             ticker = ticker!!,
-            changePercent = changePercent,
-            lastTradeExchange = lastTradeExchange,
-            lastTradePrice = lastTradePrice,
-            change = change,
+            changePercent = changePercent ?: 0.0,
+            lastTradeExchange = lastTradeExchange ?: "",
+            lastTradePrice = lastTradePrice ?: 0.0,
+            change = change ?: 0.0,
             name = name.orEmpty(),
-            minStep = minStep
+            minStep = minStep ?: 0.0
         )
 
     companion object {
+        private const val LOG_TAG = "SOCKET"
         private const val REQUEST_PATTERN = "[\"%s\",%s]"
         private const val REQUEST_EVENT_QUOTATIONS = "realtimeQuotes"
         private const val EVENT_USER_DATA = "userData"
@@ -118,5 +109,6 @@ class QuotationsRepositoryImpl(
         private const val POSITION_EVENT = 0
         private const val POSITION_DATA = 1
         private const val HOST = "wss.tradernet.com"
+        private const val FLOW_DEBOUNCE_MILLIS = 50L
     }
 }
