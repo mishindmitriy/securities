@@ -51,7 +51,18 @@ class QuotationsViewModel(
         loadData()
     }
 
-    private fun Quotation.toViewData() = QuotationViewData(
+    fun loadData() {
+        subscriptionJob?.cancel()
+        subscriptionJob = viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
+            quotationsRepository.getQuotations(tickersRepository.getTickers())
+                .map { it.map { item -> item.mapToViewData() } }
+                .collect { list ->
+                    _state.update { it.copy(error = null, inProgress = false, list = list) }
+                }
+        }
+    }
+
+    private fun Quotation.mapToViewData() = QuotationViewData(
         ticker = ticker,
         name = String.format(NAME_PATTERN, lastTradeExchange, name),
         logoUrl = LOGO_URL + ticker.lowercase(),
@@ -77,17 +88,6 @@ class QuotationsViewModel(
             else -> R.color.black_opacity_90
         }
     )
-
-    fun loadData() {
-        subscriptionJob?.cancel()
-        subscriptionJob = viewModelScope.launch(coroutineDispatcher + exceptionHandler) {
-            quotationsRepository.getQuotations(tickersRepository.getTickers())
-                .map { it.map { item -> item.toViewData() } }
-                .collect { list ->
-                    _state.update { it.copy(error = null, inProgress = false, list = list) }
-                }
-        }
-    }
 
     companion object {
         private const val TAG = "QUOTATIONS_VIEWMODEL"
