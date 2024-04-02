@@ -26,7 +26,6 @@ import coil.compose.AsyncImage
 import trader.net.test.app.R
 import trader.net.test.app.domain.Quotation
 
-
 @Composable
 fun QuotationCell(data: QuotationViewData, drawDivider: Boolean) {
     Column {
@@ -65,7 +64,10 @@ private fun firstRaw(data: QuotationViewData) {
                 .weight(weight = 1f),
         )
         val defaultColor = Color.Transparent
-        val colorState = remember(key1 = data.animate) { Animatable(defaultColor) }
+        val priceBackgroundColorState = remember(key1 = data.animate) { Animatable(defaultColor) }
+        val priceTextColorState = remember(key1 = data.animate) {
+            Animatable(Color(data.percentColor))
+        }
         if (data.animate != Quotation.ChangeType.NONE) {
             val animateToColor = if (data.animate == Quotation.ChangeType.POSITIVE) {
                 colorResource(id = R.color.green)
@@ -73,21 +75,36 @@ private fun firstRaw(data: QuotationViewData) {
                 colorResource(id = R.color.red)
             }
             LaunchedEffect(Unit) {
-                colorState.animateTo(animateToColor, animationSpec = tween(400))
-                colorState.animateTo(defaultColor, animationSpec = tween(200))
+                priceTextColorState.animateTo(
+                    Color.White,
+                    animationSpec = tween(PRICE_TEXT_ANIMATION_DURATION)
+                )
+                priceBackgroundColorState.animateTo(
+                    animateToColor,
+                    animationSpec = tween(PRICE_BACKGROUND_ANIMATION_DURATION)
+                )
+                priceBackgroundColorState.animateTo(
+                    defaultColor,
+                    animationSpec = tween(PRICE_BACKGROUND_ANIMATION_DURATION / 2)
+                )
+                priceTextColorState.animateTo(
+                    Color(data.percentColor),
+                    animationSpec = tween(PRICE_TEXT_ANIMATION_DURATION / 2)
+                )
             }
         }
         Box(
-            modifier = Modifier
-                .background(colorState.value, shape = RoundedCornerShape(8.dp)),
+            modifier = Modifier.background(
+                priceBackgroundColorState.value,
+                shape = RoundedCornerShape(8.dp)
+            )
         )
         {
             Text(
                 text = data.percentChange,
                 fontSize = 20.sp,
-                color = Color(data.percentColor),
-                modifier = Modifier
-                    .padding(4.dp)
+                color = priceTextColorState.value,
+                modifier = Modifier.padding(4.dp)
             )
         }
     }
@@ -119,3 +136,6 @@ private fun secondRow(data: QuotationViewData) {
         )
     }
 }
+
+private const val PRICE_BACKGROUND_ANIMATION_DURATION = 500
+private const val PRICE_TEXT_ANIMATION_DURATION = PRICE_BACKGROUND_ANIMATION_DURATION / 2
