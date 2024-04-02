@@ -8,7 +8,7 @@ data class QuotationViewData(
     val ticker: String,
     val logoUrl: String,
     val name: String,
-    val priceChange: String,
+    val priceWithChange: String,
     @ColorInt
     val percentColor: Int,
     val percentChange: String,

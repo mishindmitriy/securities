@@ -19,9 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import trader.net.test.app.R
 import trader.net.test.app.domain.Quotation
 
 
@@ -63,12 +65,12 @@ private fun firstRaw(data: QuotationViewData) {
                 .weight(weight = 1f),
         )
         val defaultColor = Color.Transparent
-        val colorState = remember { Animatable(defaultColor) }
+        val colorState = remember(key1 = data.animate) { Animatable(defaultColor) }
         if (data.animate != Quotation.ChangeType.NONE) {
             val animateToColor = if (data.animate == Quotation.ChangeType.POSITIVE) {
-                Color.Green
+                colorResource(id = R.color.green)
             } else {
-                Color.Red
+                colorResource(id = R.color.red)
             }
             LaunchedEffect(Unit) {
                 colorState.animateTo(animateToColor, animationSpec = tween(400))
@@ -110,7 +112,7 @@ private fun secondRow(data: QuotationViewData) {
             modifier = Modifier.weight(weight = 1f)
         )
         Text(
-            text = data.priceChange,
+            text = data.priceWithChange,
             fontSize = 11.sp,
             color = Color.Gray,
             modifier = Modifier.padding(start = 16.dp)

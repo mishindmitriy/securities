@@ -17,7 +17,7 @@ class QuotationItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         binding.ticker.text = q.ticker
         binding.name.text = q.name
         binding.logo.load(q.logoUrl)
-        binding.priceAndChange.text = q.priceChange
+        binding.priceAndChange.text = q.priceWithChange
         binding.changePercent.setTextColor(q.percentColor)
         binding.changePercent.text = q.percentChange
     }
