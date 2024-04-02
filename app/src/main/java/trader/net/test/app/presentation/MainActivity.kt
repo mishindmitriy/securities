@@ -2,17 +2,19 @@ package trader.net.test.app.presentation
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.view.isVisible
@@ -22,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import trader.net.test.app.R
 import trader.net.test.app.databinding.ActivityMainBinding
 import trader.net.test.app.presentation.adapter.QuotationsAdapter
 
@@ -37,16 +40,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun renderCompose() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect { state ->
-                    when {
-                        state.inProgress -> setContent { progressScreen() }
-                        state.list.isNotEmpty() -> setContent { quotationsList(state.list) }
-                        //todo add error state
-                    }
-                }
-            }
+        setContent { render() }
+    }
+
+    @Composable
+    private fun render() {
+        val state = viewModel.state.collectAsState()
+        when {
+            state.value.inProgress -> progressScreen()
+            state.value.error != null -> errorScreen(state.value.error!!)
+            state.value.list.isNotEmpty() -> quotationsList(state.value.list)
+            //todo add error state
         }
     }
 
@@ -61,19 +65,31 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
+    private fun errorScreen(error: String) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column {
+                Text(text = error)
+                Button(onClick = { viewModel.loadData() }) {
+                    Text(text = getString(R.string.repeat_label))
+                }
+            }
+        }
+    }
+
+    @Composable
     private fun quotationsList(list: List<QuotationViewData>) {
-        Log.d("COMPOSE", "render list")
-        val quotations = remember { list }
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             itemsIndexed(
-                items = quotations,
+                items = list,
                 key = { _, item -> item.ticker }
             ) { index, item ->
                 QuotationCell(data = item, index < list.lastIndex)
             }
         }
     }
-
 
 
     private fun renderXml() {
