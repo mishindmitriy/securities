@@ -3,31 +3,102 @@ package trader.net.test.app.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import trader.net.test.app.databinding.ActivityMainBinding
 import trader.net.test.app.presentation.adapter.QuotationsAdapter
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     private val viewModel: QuotationsViewModel by viewModel()
-    private lateinit var binding: ActivityMainBinding
 
-    private val quotationsAdapter = QuotationsAdapter()
+    private val compose = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        actionBar?.hide()
+        if (compose) renderCompose() else renderXml()
+    }
+
+    private fun renderCompose() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.state.collect { state ->
+                    when {
+                        state.inProgress -> setContent { progressScreen() }
+                        state.list.isNotEmpty() -> setContent { quotationsList(state.list) }
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun progressScreen() {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
+    @Composable
+    private fun quotationsList(list: List<QuotationViewData>) {
+        val quotations = remember { list }
+        LazyColumn {
+            items(
+                items = quotations,
+                key = { it.ticker }
+            ) {
+                QuotationCell(data = it)
+            }
+        }
+    }
+
+    @Composable
+    private fun QuotationCell(data: QuotationViewData) {
+        Column {
+            Row {
+                AsyncImage(
+                    model = data.logoUrl,
+                    contentDescription = data.ticker,
+                )
+                Text(text = data.ticker)
+            }
+            Row {
+                Text(text = data.name)
+            }
+        }
+
+    }
+
+    private fun renderXml() {
+        val binding: ActivityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
-        supportActionBar?.hide()
         binding.recycler.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
+        val quotationsAdapter = QuotationsAdapter()
         binding.recycler.adapter = quotationsAdapter
         binding.repeatButton.setOnClickListener { viewModel.loadData() }
 
