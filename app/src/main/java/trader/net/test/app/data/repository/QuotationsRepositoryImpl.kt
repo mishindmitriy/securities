@@ -49,6 +49,7 @@ class QuotationsRepositoryImpl(
 
                             EVENT_QUOTATION -> {
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
+                                Log.d(LOG_TAG, "new data $qRaw")
                                 val existQ = quotationMutableMap[qRaw.ticker]
                                 val updQ = existQ?.mergeQ(qRaw) ?: qRaw.mapToViewData()
                                 quotationMutableMap[updQ.ticker] = updQ

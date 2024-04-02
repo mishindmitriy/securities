@@ -29,4 +29,16 @@ data class QuotationRawData(
     var change: Double? = null,
     @SerialName("min_step")
     var minStep: Double? = null
-)
+) {
+    override fun toString(): String {
+        val strBuilder = StringBuilder("QuotationRawData {")
+        ticker?.let { strBuilder.append("ticker=$it,") }
+        changePercent?.let { strBuilder.append("changePercent=$it,") }
+        lastTradeExchange?.let { strBuilder.append("lastTradeExchange=$it,") }
+        name?.let { strBuilder.append("name=$it,") }
+        lastTradePrice?.let { strBuilder.append("lastTradePrice=$it,") }
+        minStep?.let { strBuilder.append("minStep=$it,") }
+        strBuilder.append("}")
+        return strBuilder.toString()
+    }
+}
