@@ -33,7 +33,7 @@ class QuotationsViewModel(
     private val _state = MutableStateFlow(QuotationsViewState())
     val state: StateFlow<QuotationsViewState> get() = _state
 
-    private val decimalFormat = DecimalFormat("###.#####")
+    private val decimalFormat = DecimalFormat(DECIMAL_FORMAT_PATTERN)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         Log.d(TAG, throwable.message.toString())
@@ -53,33 +53,21 @@ class QuotationsViewModel(
 
     private fun Quotation.toViewData() = QuotationViewData(
         ticker = ticker,
-        name = if (lastTradeExchange == null) name
-        else String.format(NAME_PATTERN, lastTradeExchange, name),
+        name = String.format(NAME_PATTERN, lastTradeExchange, name),
         logoUrl = LOGO_URL + ticker.lowercase(),
-        priceChange = formatPrice(this),
+        priceChange = formatPrice(change, lastTradePrice),
         percentColor = preparePercentColor(changePercent),
-        percentChange = formatPercentage(changePercent)
+        percentChange = formatDecimal(changePercent)
     )
 
-    private fun formatPercentage(changePercent: Double): String {
-        val prefix = when {
-            changePercent > 0.0 -> "+"
-            else -> ""
-        }
-        return "$prefix${decimalFormat.format(changePercent)}%"
+    private fun formatDecimal(d: Double): String {
+        val prefix = if (d > 0.0) POSITIVE_DECIMAL_PREFIX else ""
+        return String.format(DECIMAL_WITH_PREFIX_PATTERN, prefix, decimalFormat.format(d))
     }
 
-    private fun formatPrice(q: Quotation): String {
-        return if (q.lastTradePrice == null) ""
-        else {
-            val qChange = q.change
-            val changeString: String = when {
-                qChange == null -> ""
-                qChange > 0.0 -> "+${decimalFormat.format(qChange)}"
-                else -> decimalFormat.format(qChange)
-            }
-            "${q.lastTradePrice} ($changeString)"
-        }
+    private fun formatPrice(change: Double, lastTradePrice: Double): String {
+        val changeString: String = formatDecimal(change)
+        return String.format(PRICE_FORMAT_PATTERN, lastTradePrice, changeString)
     }
 
     private fun preparePercentColor(changePercent: Double) = resourceProvider.getColor(
@@ -102,8 +90,12 @@ class QuotationsViewModel(
     }
 
     companion object {
-        private const val TAG = "viewmodel"
+        private const val TAG = "QUOTATIONS_VIEWMODEL"
         private const val LOGO_URL = "https://tradernet.ru/logos/get-logo-by-ticker?ticker="
         private const val NAME_PATTERN = "%s | %s"
+        private const val DECIMAL_FORMAT_PATTERN = "###.#####"
+        private const val POSITIVE_DECIMAL_PREFIX = "+"
+        private const val DECIMAL_WITH_PREFIX_PATTERN = "%s%s%%"
+        private const val PRICE_FORMAT_PATTERN = "%s (%s)"
     }
 }
