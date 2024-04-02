@@ -69,7 +69,7 @@ class QuotationsViewModel(
         logoUrl = LOGO_URL + ticker.lowercase(),
         priceChange = formatPrice(change, lastTradePrice),
         percentColor = preparePercentColor(changePercent),
-        percentChange = formatDecimal(changePercent)
+        percentChange = formatDecimal(changePercent) + PERCENTAGE_SYMBOL
     )
 
     private fun formatDecimal(d: Double): String {
@@ -95,7 +95,8 @@ class QuotationsViewModel(
         private const val NAME_PATTERN = "%s | %s"
         private const val DECIMAL_FORMAT_PATTERN = "###.#####"
         private const val POSITIVE_DECIMAL_PREFIX = "+"
-        private const val DECIMAL_WITH_PREFIX_PATTERN = "%s%s%%"
+        private const val DECIMAL_WITH_PREFIX_PATTERN = "%s%s"
         private const val PRICE_FORMAT_PATTERN = "%s (%s)"
+        private const val PERCENTAGE_SYMBOL = "%"
     }
 }
