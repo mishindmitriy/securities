@@ -49,7 +49,7 @@ class QuotationsRepositoryImpl(
 
                             EVENT_QUOTATION -> {
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
-                                Log.d(LOG_TAG, "new data $qRaw")
+                                Log.d(LOG_TAG, "new data $data")
                                 val existQ = quotationMutableMap[qRaw.ticker]
                                 val updQ = existQ?.mergeQ(qRaw) ?: qRaw.mapToViewData()
                                 quotationMutableMap[updQ.ticker] = updQ
@@ -66,8 +66,16 @@ class QuotationsRepositoryImpl(
     }
 
     private fun Quotation.mergeQ(newQ: QuotationRawData): Quotation {
+        changeType = Quotation.ChangeType.NONE
         newQ.change?.let { change = it }
-        newQ.changePercent?.let { changePercent = it }
+        newQ.changePercent?.let { newValue ->
+            changeType = when {
+                newValue == changePercent -> Quotation.ChangeType.NONE
+                newValue > changePercent -> Quotation.ChangeType.POSITIVE
+                else -> Quotation.ChangeType.NEGATIVE
+            }
+            changePercent = newValue
+        }
         newQ.lastTradeExchange?.let { lastTradeExchange = it }
         newQ.lastTradePrice?.let { lastTradePrice = it }
         newQ.minStep?.let { minStep = it }

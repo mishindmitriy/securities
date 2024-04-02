@@ -8,5 +8,10 @@ data class Quotation(
     var name: String,
     var lastTradePrice: Double = 0.0,
     var change: Double = 0.0,
-    var minStep: Double = 0.0
-)
+    var minStep: Double = 0.0,
+    var changeType: ChangeType = ChangeType.NONE
+) {
+    enum class ChangeType {
+        POSITIVE, NEGATIVE, NONE
+    }
+}
