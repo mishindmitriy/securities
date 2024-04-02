@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
             state.value.inProgress -> progressScreen()
             state.value.error != null -> errorScreen(state.value.error!!)
             state.value.list.isNotEmpty() -> quotationsList(state.value.list)
-            //todo add error state
         }
     }
 

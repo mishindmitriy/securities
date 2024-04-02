@@ -17,6 +17,8 @@ import trader.net.test.app.domain.Quotation
 import trader.net.test.app.domain.QuotationsRepository
 import trader.net.test.app.domain.ResourceProvider
 import trader.net.test.app.domain.TickersRepository
+import java.math.BigDecimal
+import java.math.MathContext
 import java.text.DecimalFormat
 
 data class QuotationsViewState(
@@ -83,8 +85,18 @@ class QuotationsViewModel(
         lastTradePrice: Double,
         minStep: Double
     ): String {
-        val changeString: String = formatDecimal(change)
-        return PRICE_FORMAT_PATTERN.format(lastTradePrice, changeString)
+        if (minStep == 0.0) return PRICE_FORMAT_PATTERN.format(lastTradePrice, change)
+        val changeString: String = formatDecimal(roundByStepFormat(change, minStep).toDouble())
+        val price = roundByStepFormat(lastTradePrice, minStep)
+        return PRICE_FORMAT_PATTERN.format(price.toString(), changeString)
+    }
+
+    private fun roundByStepFormat(value: Double, step: Double): BigDecimal {
+        val minStepBigDecimal = step.toBigDecimal()
+        val underStep = value.toBigDecimal() / minStepBigDecimal
+        val rounded = underStep.round(MathContext.DECIMAL32)
+        val overMinStep = rounded * minStepBigDecimal
+        return overMinStep.stripTrailingZeros()
     }
 
     private fun preparePercentColor(changePercent: Double) = resourceProvider.getColor(
