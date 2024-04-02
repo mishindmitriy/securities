@@ -2,17 +2,15 @@ package trader.net.test.app.presentation
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -22,7 +20,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
-import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import trader.net.test.app.databinding.ActivityMainBinding
@@ -46,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     when {
                         state.inProgress -> setContent { progressScreen() }
                         state.list.isNotEmpty() -> setContent { quotationsList(state.list) }
+                        //todo add error state
                     }
                 }
             }
@@ -64,33 +62,19 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun quotationsList(list: List<QuotationViewData>) {
+        Log.d("COMPOSE", "render list")
         val quotations = remember { list }
-        LazyColumn {
-            items(
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            itemsIndexed(
                 items = quotations,
-                key = { it.ticker }
-            ) {
-                QuotationCell(data = it)
+                key = { _, item -> item.ticker }
+            ) { index, item ->
+                QuotationCell(data = item, index < list.lastIndex)
             }
         }
     }
 
-    @Composable
-    private fun QuotationCell(data: QuotationViewData) {
-        Column {
-            Row {
-                AsyncImage(
-                    model = data.logoUrl,
-                    contentDescription = data.ticker,
-                )
-                Text(text = data.ticker)
-            }
-            Row {
-                Text(text = data.name)
-            }
-        }
 
-    }
 
     private fun renderXml() {
         val binding: ActivityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this))
