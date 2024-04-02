@@ -1,5 +1,6 @@
 package trader.net.test.app.data.repository
 
+import android.util.Log
 import trader.net.test.app.data.datasource.TickersLocalDataSource
 import trader.net.test.app.data.datasource.TickersRemoteDataSource
 import trader.net.test.app.domain.Ticker
@@ -11,8 +12,16 @@ class TicketsRepositoryImpl(
 ) : TickersRepository {
 
     override suspend fun getTickers(): List<Ticker> {
-        val remoteData = remoteDataStore.getTickers()
-        if (!remoteData.isNullOrEmpty()) return remoteData
+        try {
+            val remoteData = remoteDataStore.getTickers()
+            if (!remoteData.isNullOrEmpty()) return remoteData
+        } catch (e: Exception) {
+            Log.d(TAG, e.message.orEmpty())
+        }
         return localDataSource.getTickers()
+    }
+
+    companion object {
+        private const val TAG = "TICKETS"
     }
 }
