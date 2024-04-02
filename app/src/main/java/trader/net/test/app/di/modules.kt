@@ -27,6 +27,7 @@ import trader.net.test.app.presentation.QuotationsViewModel
 import trader.net.test.app.presentation.ResourceProviderImpl
 
 private const val DISPATCHER_IO = "dispatcher_io"
+private const val DEFAULT_TIMEOUT = 2000L
 
 val appModule = module {
     single<ResourceProvider> { ResourceProviderImpl(get()) }
@@ -50,9 +51,9 @@ val networkModule = module {
                 level = if (BuildConfig.DEBUG) LogLevel.ALL else LogLevel.NONE
             }
             developmentMode = BuildConfig.DEBUG
-            install(ContentNegotiation) { get() as Json } //todo replace with kotlin serialisation?
+            install(ContentNegotiation) { get() as Json }
             install(HttpTimeout) {
-                requestTimeoutMillis = 2000
+                requestTimeoutMillis = DEFAULT_TIMEOUT
             }
         }
     }
@@ -70,7 +71,7 @@ val presentationModule = module {
 }
 
 private object CustomAndroidHttpLogger : Logger {
-    private const val LOG_TAG = "CustomAndroidHttpLogger"
+    private const val LOG_TAG = "HTTP"
 
     override fun log(message: String) {
         Log.i(LOG_TAG, message)
