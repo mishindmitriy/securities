@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import trader.net.test.app.databinding.ActivityMainBinding
+import trader.net.test.app.presentation.adapter.QuotationsAdapter
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: QuotationsViewModel by viewModel()

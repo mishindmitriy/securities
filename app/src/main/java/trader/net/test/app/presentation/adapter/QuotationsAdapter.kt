@@ -1,7 +1,8 @@
-package trader.net.test.app.presentation
+package trader.net.test.app.presentation.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
+import trader.net.test.app.presentation.QuotationViewData
 
 class QuotationsAdapter :
     ListAdapter<QuotationViewData, QuotationItemViewHolder>(QuotationsDiffUtil()) {
