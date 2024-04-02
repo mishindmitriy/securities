@@ -3,10 +3,10 @@ package trader.net.test.app.domain
 
 data class Quotation(
     val ticker: String,
-    val changePercent: Double? = null,
-    var lastTradeExchange: String? = null,
+    var changePercent: Double = 0.0,
+    var lastTradeExchange: String = "",
     var name: String,
-    var lastTradePrice: Double? = null,
-    var change: Double? = null,
-    var minStep: Double? = null
+    var lastTradePrice: Double = 0.0,
+    var change: Double = 0.0,
+    var minStep: Double = 0.0
 )
