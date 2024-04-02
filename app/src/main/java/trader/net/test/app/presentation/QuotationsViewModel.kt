@@ -69,7 +69,8 @@ class QuotationsViewModel(
         logoUrl = LOGO_URL + ticker.lowercase(),
         priceChange = formatPrice(change, lastTradePrice),
         percentColor = preparePercentColor(changePercent),
-        percentChange = formatDecimal(changePercent) + PERCENTAGE_SYMBOL
+        percentChange = formatDecimal(changePercent) + PERCENTAGE_SYMBOL,
+        animate = changeType
     )
 
     private fun formatDecimal(d: Double): String {
