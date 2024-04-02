@@ -85,8 +85,7 @@ class QuotationsRepositoryImpl(
 
     private fun createRequest(tickers: List<Ticker>): String {
         val stringTickersList = tickers.map { it.value }
-        return String.format(
-            REQUEST_PATTERN,
+        return REQUEST_PATTERN.format(
             REQUEST_EVENT_QUOTATIONS,
             json.encodeToString(stringTickersList)
         )

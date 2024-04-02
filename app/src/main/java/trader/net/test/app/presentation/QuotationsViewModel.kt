@@ -65,9 +65,9 @@ class QuotationsViewModel(
 
     private fun Quotation.mapToViewData() = QuotationViewData(
         ticker = ticker,
-        name = String.format(NAME_PATTERN, lastTradeExchange, name),
+        name = NAME_PATTERN.format(lastTradeExchange, name),
         logoUrl = LOGO_URL + ticker.lowercase(),
-        priceChange = formatPrice(change, lastTradePrice),
+        priceWithChange = formatPriceWithChange(change, lastTradePrice, minStep),
         percentColor = preparePercentColor(changePercent),
         percentChange = formatDecimal(changePercent) + PERCENTAGE_SYMBOL,
         animate = changeType
@@ -75,12 +75,16 @@ class QuotationsViewModel(
 
     private fun formatDecimal(d: Double): String {
         val prefix = if (d > 0.0) POSITIVE_DECIMAL_PREFIX else ""
-        return String.format(DECIMAL_WITH_PREFIX_PATTERN, prefix, decimalFormat.format(d))
+        return DECIMAL_WITH_PREFIX_PATTERN.format(prefix, decimalFormat.format(d))
     }
 
-    private fun formatPrice(change: Double, lastTradePrice: Double): String {
+    private fun formatPriceWithChange(
+        change: Double,
+        lastTradePrice: Double,
+        minStep: Double
+    ): String {
         val changeString: String = formatDecimal(change)
-        return String.format(PRICE_FORMAT_PATTERN, lastTradePrice, changeString)
+        return PRICE_FORMAT_PATTERN.format(lastTradePrice, changeString)
     }
 
     private fun preparePercentColor(changePercent: Double) = resourceProvider.getColor(
