@@ -31,20 +31,19 @@ import trader.net.test.app.presentation.adapter.QuotationsAdapter
 class MainActivity : ComponentActivity() {
     private val viewModel: QuotationsViewModel by viewModel()
 
-    private val compose = true
+    private val renderWithCompose = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        actionBar?.hide()
-        if (compose) renderCompose() else renderXml()
+        if (renderWithCompose) renderCompose() else renderXml()
     }
 
     private fun renderCompose() {
-        setContent { render() }
+        setContent { renderState() }
     }
 
     @Composable
-    private fun render() {
+    private fun renderState() {
         val state = viewModel.state.collectAsState()
         when {
             state.value.inProgress -> progressScreen()
