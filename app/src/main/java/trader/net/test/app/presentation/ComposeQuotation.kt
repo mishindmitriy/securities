@@ -85,11 +85,18 @@ private fun firstRaw(data: QuotationViewData) {
                 )
                 priceBackgroundColorState.animateTo(
                     defaultColor,
-                    animationSpec = tween(PRICE_BACKGROUND_ANIMATION_DURATION / 2)
+                    animationSpec = tween(PRICE_BACKGROUND_ANIMATION_DURATION)
                 )
                 priceTextColorState.animateTo(
                     Color(data.percentColor),
-                    animationSpec = tween(PRICE_TEXT_ANIMATION_DURATION / 2)
+                    animationSpec = tween(PRICE_TEXT_ANIMATION_DURATION)
+                )
+            }
+        } else {
+            LaunchedEffect(Unit) {
+                priceTextColorState.animateTo(
+                    Color(data.percentColor),
+                    animationSpec = tween(0)
                 )
             }
         }
@@ -137,5 +144,5 @@ private fun secondRow(data: QuotationViewData) {
     }
 }
 
-private const val PRICE_BACKGROUND_ANIMATION_DURATION = 500
-private const val PRICE_TEXT_ANIMATION_DURATION = 250
+private const val PRICE_BACKGROUND_ANIMATION_DURATION = 300
+private const val PRICE_TEXT_ANIMATION_DURATION = 100

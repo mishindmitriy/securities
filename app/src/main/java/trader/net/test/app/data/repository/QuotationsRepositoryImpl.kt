@@ -119,6 +119,6 @@ class QuotationsRepositoryImpl(
         private const val EVENT_QUOTATION = "q"
         private const val POSITION_EVENT = 0
         private const val POSITION_DATA = 1
-        private const val FLOW_DEBOUNCE_MILLIS = 100L
+        private const val FLOW_DEBOUNCE_MILLIS = 300L
     }
 }
