@@ -49,7 +49,6 @@ class QuotationsRepositoryImpl(
 
                             EVENT_QUOTATION -> {
                                 val qRaw = json.decodeFromString<QuotationRawData>(data)
-                                Log.d(LOG_TAG, "new data $data")
                                 val existQ = quotationMutableMap[qRaw.ticker]
                                 val updQ = existQ?.mergeQ(qRaw) ?: qRaw.mapToViewData()
                                 quotationMutableMap[updQ.ticker] = updQ
@@ -69,10 +68,12 @@ class QuotationsRepositoryImpl(
         changeType = Quotation.ChangeType.NONE
         newQ.change?.let { change = it }
         newQ.changePercent?.let { newValue ->
-            changeType = when {
-                newValue == changePercent -> Quotation.ChangeType.NONE
-                newValue > changePercent -> Quotation.ChangeType.POSITIVE
-                else -> Quotation.ChangeType.NEGATIVE
+            changePercent?.let { oldValue ->
+                changeType = when {
+                    newValue == oldValue -> Quotation.ChangeType.NONE
+                    newValue > oldValue -> Quotation.ChangeType.POSITIVE
+                    else -> Quotation.ChangeType.NEGATIVE
+                }
             }
             changePercent = newValue
         }
@@ -101,7 +102,7 @@ class QuotationsRepositoryImpl(
         Quotation(
             //ticker require, exception will skip entity
             ticker = ticker!!,
-            changePercent = changePercent ?: 0.0,
+            changePercent = changePercent,
             lastTradeExchange = lastTradeExchange ?: "",
             lastTradePrice = lastTradePrice ?: 0.0,
             change = change ?: 0.0,
@@ -117,6 +118,6 @@ class QuotationsRepositoryImpl(
         private const val EVENT_QUOTATION = "q"
         private const val POSITION_EVENT = 0
         private const val POSITION_DATA = 1
-        private const val FLOW_DEBOUNCE_MILLIS = 50L
+        private const val FLOW_DEBOUNCE_MILLIS = 100L
     }
 }

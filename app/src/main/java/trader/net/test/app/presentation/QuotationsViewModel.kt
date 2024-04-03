@@ -70,8 +70,8 @@ class QuotationsViewModel(
         name = NAME_PATTERN.format(lastTradeExchange, name),
         logoUrl = LOGO_URL + ticker.lowercase(),
         priceWithChange = formatPriceWithChange(change, lastTradePrice, minStep),
-        percentColor = preparePercentColor(changePercent),
-        percentChange = formatDecimal(changePercent) + PERCENTAGE_SYMBOL,
+        percentColor = preparePercentColor(change),
+        percentChange = formatDecimal(changePercent ?: 0.0) + PERCENTAGE_SYMBOL,
         animate = changeType
     )
 
@@ -99,10 +99,10 @@ class QuotationsViewModel(
         return overMinStep.stripTrailingZeros()
     }
 
-    private fun preparePercentColor(changePercent: Double) = resourceProvider.getColor(
+    private fun preparePercentColor(change: Double) = resourceProvider.getColor(
         when {
-            changePercent > 0 -> R.color.green
-            changePercent < 0 -> R.color.red
+            change > 0 -> R.color.green
+            change < 0 -> R.color.red
             else -> R.color.black_opacity_90
         }
     )

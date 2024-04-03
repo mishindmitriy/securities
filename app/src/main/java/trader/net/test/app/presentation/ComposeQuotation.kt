@@ -65,7 +65,7 @@ private fun firstRaw(data: QuotationViewData) {
         )
         val defaultColor = Color.Transparent
         val priceBackgroundColorState = remember(key1 = data.animate) { Animatable(defaultColor) }
-        val priceTextColorState = remember(key1 = data.animate) {
+        val priceTextColorState = remember(key1 = data.percentColor) {
             Animatable(Color(data.percentColor))
         }
         if (data.animate != Quotation.ChangeType.NONE) {
@@ -138,4 +138,4 @@ private fun secondRow(data: QuotationViewData) {
 }
 
 private const val PRICE_BACKGROUND_ANIMATION_DURATION = 500
-private const val PRICE_TEXT_ANIMATION_DURATION = PRICE_BACKGROUND_ANIMATION_DURATION / 2
+private const val PRICE_TEXT_ANIMATION_DURATION = 250
